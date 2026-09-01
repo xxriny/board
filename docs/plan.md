@@ -142,7 +142,7 @@
 - Test: `src/test/java/com/xxrin/board/comment/CommentCreateTest.java`
 
 **Interfaces:**
-- Produces: comment save and `POST /api/boards/{boardId}/comments` with 201.
+- Produces: BCrypt 비밀번호 해시를 저장하는 comment save와 `POST /api/boards/{boardId}/comments` with 201.
 
 - [ ] Write failing validation, repository, service, and MockMvc tests for success, invalid input, and missing Board.
 - [ ] Implement DTOs, concrete EntityManager repository, transactional service, and POST controller.
@@ -173,7 +173,7 @@
 - Test: `src/test/java/com/xxrin/board/comment/CommentUpdateTest.java`
 
 **Interfaces:**
-- Produces: content-only update and `PUT /api/boards/{boardId}/comments/{commentId}`.
+- Produces: 비밀번호 검증 후 content-only update와 `PUT /api/boards/{boardId}/comments/{commentId}`.
 
 - [ ] Write failing tests for success, invalid content, missing Comment, and ownership mismatch.
 - [ ] Implement update request, composite lookup, transactional dirty-checking update, and nested PUT controller.
@@ -188,7 +188,7 @@
 - Test: `src/test/java/com/xxrin/board/comment/CommentDeleteTest.java`
 
 **Interfaces:**
-- Produces: composite lookup/remove and `DELETE /api/boards/{boardId}/comments/{commentId}`.
+- Produces: 비밀번호 검증을 포함한 composite lookup/remove와 `DELETE /api/boards/{boardId}/comments/{commentId}?password={password}`.
 
 - [ ] Write failing tests for success, missing Board, missing Comment, and ownership mismatch.
 - [ ] Implement `findByBoardIdAndId`, remove, transactional service delete, and nested DELETE controller.
@@ -218,7 +218,7 @@
 ## Definition of Done
 
 - [x] CRUD slices were completed in Board C → R → U → D, then Comment C → R → U → D order.
-- [x] All nine APIs return the documented status and `ApiResponse<T>` JSON shape.
+- [x] All nine APIs return the documented status and `ApiResponse<T>` JSON shape; Board와 Comment 수정·삭제는 BCrypt 비밀번호 검증을 거친다.
 - [x] Missing resources return 404 and invalid requests return field-specific 400 responses.
 - [x] Board detail increments view count and Board deletion cascades to Comments.
 - [x] No Spring Data JPA, Boot bootstrap, `web.xml`, or view technology exists.

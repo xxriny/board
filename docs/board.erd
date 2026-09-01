@@ -87,6 +87,7 @@
           "commentId",
           "commentContent",
           "commentWriter",
+          "commentPasswordHash",
           "commentBoardId",
           "commentCreatedAt",
           "0KTDN_ZKSgeyndZcmYIHF"
@@ -95,6 +96,7 @@
           "commentId",
           "commentContent",
           "commentWriter",
+          "commentPasswordHash",
           "commentBoardId",
           "commentCreatedAt",
           "0KTDN_ZKSgeyndZcmYIHF"
@@ -326,6 +328,26 @@
           "keys": 0,
           "widthName": 60,
           "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "commentPasswordHash": {
+        "id": "commentPasswordHash",
+        "tableId": "comment",
+        "name": "password_hash",
+        "comment": "댓글 비밀번호 해시",
+        "dataType": "String",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 92,
+          "widthComment": 100,
           "widthDataType": 60,
           "widthDefault": 60
         },

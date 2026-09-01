@@ -65,19 +65,19 @@ curl -X PUT http://localhost:8080/board/api/boards/1 \
 
 curl -X POST http://localhost:8080/board/api/boards/1/comments \
   -H 'Content-Type: application/json' \
-  -d '{"content":"댓글","writer":"댓글 작성자"}'
+  -d '{"content":"댓글","writer":"댓글 작성자","password":"1234"}'
 
 curl http://localhost:8080/board/api/boards/1/comments
 
 curl -X PUT http://localhost:8080/board/api/boards/1/comments/1 \
   -H 'Content-Type: application/json' \
-  -d '{"content":"수정 댓글"}'
+  -d '{"content":"수정 댓글","password":"1234"}'
 
-curl -X DELETE http://localhost:8080/board/api/boards/1/comments/1
+curl -X DELETE 'http://localhost:8080/board/api/boards/1/comments/1?password=1234'
 curl -X DELETE 'http://localhost:8080/board/api/boards/1?password=1234'
 ```
 
-게시글 비밀번호는 BCrypt 해시로 저장하며 응답에 노출하지 않는다. 게시글 수정·삭제 시 작성 당시 비밀번호가 필요하다.
+게시글과 댓글 비밀번호는 BCrypt 해시로 저장하며 응답에 노출하지 않는다. 각 리소스의 수정·삭제 시 작성 당시 비밀번호가 필요하다.
 
 ## DataGrip 연결
 
