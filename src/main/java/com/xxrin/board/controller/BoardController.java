@@ -3,6 +3,7 @@ package com.xxrin.board.controller;
 import com.xxrin.board.dto.request.BoardCreateRequest;
 import com.xxrin.board.dto.response.ApiResponse;
 import com.xxrin.board.dto.response.BoardResponse;
+import com.xxrin.board.dto.response.BoardDetailResponse;
 import com.xxrin.board.dto.response.PageResponse;
 import com.xxrin.board.service.BoardService;
 import jakarta.validation.constraints.Max;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.validation.annotation.Validated;
 
@@ -48,5 +50,11 @@ public class BoardController {
             int size) {
         return ResponseEntity.ok(
                 ApiResponse.success(boardService.findAll(page, size), "게시글 목록을 조회했습니다."));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<BoardDetailResponse>> findDetail(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success(
+                boardService.findDetail(id), "게시글 상세를 조회했습니다."));
     }
 }

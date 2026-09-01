@@ -3,7 +3,9 @@ package com.xxrin.board.service;
 import com.xxrin.board.domain.Board;
 import com.xxrin.board.dto.request.BoardCreateRequest;
 import com.xxrin.board.dto.response.BoardResponse;
+import com.xxrin.board.dto.response.BoardDetailResponse;
 import com.xxrin.board.dto.response.PageResponse;
+import com.xxrin.board.exception.EntityNotFoundException;
 import com.xxrin.board.repository.BoardRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -35,5 +37,13 @@ public class BoardService {
                 .map(BoardResponse::from)
                 .toList();
         return PageResponse.of(content, page, size, boardRepository.count());
+    }
+
+    @Transactional
+    public BoardDetailResponse findDetail(Long id) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+        board.increaseViewCount();
+        return BoardDetailResponse.from(board);
     }
 }

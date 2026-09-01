@@ -4,6 +4,7 @@ import com.xxrin.board.domain.Board;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 /** EntityManager를 직접 사용하는 게시글 영속성 컴포넌트다. */
@@ -29,5 +30,9 @@ public class BoardRepository {
     public long count() {
         return entityManager.createQuery("select count(b) from Board b", Long.class)
                 .getSingleResult();
+    }
+
+    public Optional<Board> findById(Long id) {
+        return Optional.ofNullable(entityManager.find(Board.class, id));
     }
 }
