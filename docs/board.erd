@@ -1,0 +1,388 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dineug/erd-editor/main/json-schema/schema.json",
+  "version": "3.0.0",
+  "settings": {
+    "width": 2000,
+    "height": 2000,
+    "scrollTop": 0,
+    "scrollLeft": 0,
+    "zoomLevel": 1,
+    "show": 431,
+    "database": 4,
+    "databaseName": "board_db",
+    "canvasType": "ERD",
+    "language": 32,
+    "tableNameCase": 4,
+    "columnNameCase": 2,
+    "bracketType": 1,
+    "relationshipDataTypeSync": true,
+    "relationshipOptimization": false,
+    "columnOrder": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64
+    ],
+    "maxWidthComment": -1,
+    "ignoreSaveSettings": 0
+  },
+  "doc": {
+    "tableIds": [
+      "board",
+      "comment"
+    ],
+    "relationshipIds": [
+      "boardComments"
+    ],
+    "indexIds": [],
+    "memoIds": []
+  },
+  "collections": {
+    "tableEntities": {
+      "board": {
+        "id": "board",
+        "name": "boards",
+        "comment": "게시글",
+        "columnIds": [
+          "boardId",
+          "boardTitle",
+          "boardContent",
+          "boardWriter",
+          "boardViewCount",
+          "boardCreatedAt",
+          "boardUpdatedAt"
+        ],
+        "seqColumnIds": [
+          "boardId",
+          "boardTitle",
+          "boardContent",
+          "boardWriter",
+          "boardViewCount",
+          "boardCreatedAt",
+          "boardUpdatedAt"
+        ],
+        "ui": {
+          "x": 58,
+          "y": 264,
+          "zIndex": 1,
+          "widthName": 60,
+          "widthComment": 60,
+          "color": "#4DABF7"
+        },
+        "meta": {
+          "updateAt": 1788239513081,
+          "createAt": 0
+        }
+      },
+      "comment": {
+        "id": "comment",
+        "name": "comments",
+        "comment": "댓글",
+        "columnIds": [
+          "commentId",
+          "commentContent",
+          "commentWriter",
+          "commentBoardId",
+          "commentCreatedAt"
+        ],
+        "seqColumnIds": [
+          "commentId",
+          "commentContent",
+          "commentWriter",
+          "commentBoardId",
+          "commentCreatedAt"
+        ],
+        "ui": {
+          "x": 590,
+          "y": 281,
+          "zIndex": 2,
+          "widthName": 61,
+          "widthComment": 60,
+          "color": "#69DB7C"
+        },
+        "meta": {
+          "updateAt": 1788239534081,
+          "createAt": 0
+        }
+      }
+    },
+    "tableColumnEntities": {
+      "boardId": {
+        "id": "boardId",
+        "tableId": "board",
+        "name": "id",
+        "comment": "게시글 식별자",
+        "dataType": "Long",
+        "default": "",
+        "options": 11,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 68,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "boardTitle": {
+        "id": "boardTitle",
+        "tableId": "board",
+        "name": "title",
+        "comment": "게시글 제목",
+        "dataType": "String",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "boardContent": {
+        "id": "boardContent",
+        "tableId": "board",
+        "name": "content",
+        "comment": "게시글 내용",
+        "dataType": "String",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "boardWriter": {
+        "id": "boardWriter",
+        "tableId": "board",
+        "name": "writer",
+        "comment": "게시글 작성자",
+        "dataType": "String",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 68,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "boardViewCount": {
+        "id": "boardViewCount",
+        "tableId": "board",
+        "name": "view_count",
+        "comment": "조회수",
+        "dataType": "int",
+        "default": "0",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 65,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "boardCreatedAt": {
+        "id": "boardCreatedAt",
+        "tableId": "board",
+        "name": "created_at",
+        "comment": "게시글 생성 시각",
+        "dataType": "LocalDateTime",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 63,
+          "widthComment": 81,
+          "widthDataType": 85,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "boardUpdatedAt": {
+        "id": "boardUpdatedAt",
+        "tableId": "board",
+        "name": "updated_at",
+        "comment": "게시글 수정 시각",
+        "dataType": "LocalDateTime",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 67,
+          "widthComment": 81,
+          "widthDataType": 85,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "commentId": {
+        "id": "commentId",
+        "tableId": "comment",
+        "name": "id",
+        "comment": "댓글 식별자",
+        "dataType": "Long",
+        "default": "",
+        "options": 11,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "commentContent": {
+        "id": "commentContent",
+        "tableId": "comment",
+        "name": "content",
+        "comment": "댓글 내용",
+        "dataType": "String",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "commentWriter": {
+        "id": "commentWriter",
+        "tableId": "comment",
+        "name": "writer",
+        "comment": "댓글 작성자",
+        "dataType": "String",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "commentBoardId": {
+        "id": "commentBoardId",
+        "tableId": "comment",
+        "name": "board_id",
+        "comment": "게시글 식별자",
+        "dataType": "Long",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 68,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "commentCreatedAt": {
+        "id": "commentCreatedAt",
+        "tableId": "comment",
+        "name": "created_at",
+        "comment": "댓글 생성 시각",
+        "dataType": "LocalDateTime",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 63,
+          "widthComment": 71,
+          "widthDataType": 85,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      }
+    },
+    "relationshipEntities": {
+      "boardComments": {
+        "id": "boardComments",
+        "identification": false,
+        "relationshipType": 16,
+        "startRelationshipType": 2,
+        "start": {
+          "tableId": "board",
+          "columnIds": [
+            "boardId"
+          ],
+          "x": 476,
+          "y": 376,
+          "direction": 2
+        },
+        "end": {
+          "tableId": "comment",
+          "columnIds": [
+            "commentBoardId"
+          ],
+          "x": 590,
+          "y": 369,
+          "direction": 1
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      }
+    },
+    "indexEntities": {},
+    "indexColumnEntities": {},
+    "memoEntities": {}
+  }
+}
