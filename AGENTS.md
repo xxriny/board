@@ -40,6 +40,20 @@ Before changing production code, read these files in order:
 
 Delete the generated IntelliJ sample `src/Main.java` when Gradle scaffolding is introduced; it is not part of the application.
 
+## Development Order
+
+After the shared Gradle, Spring, JPA, domain, DTO wrapper, validation, and exception foundations are ready, implement behavior as vertical API slices in this order:
+
+1. Board Create
+2. Board Read: list, then detail with view-count increment
+3. Board Update
+4. Board Delete
+5. Comment Create
+6. Comment Read
+7. Comment Delete
+
+For each slice, follow RED → GREEN → REFACTOR across Repository, Service, Controller, and tests before starting the next slice. Do not implement all repositories, then all services, then all controllers.
+
 ## Verification
 
 Run the following before reporting completion:
@@ -50,3 +64,38 @@ docker compose config
 ```
 
 When Docker is available, also run the Testcontainers integration suite and verify the MySQL service health check.
+
+## Commit Convention
+
+Use the following format:
+
+```text
+<type>: <summary>
+```
+
+Only these commit types are allowed:
+
+- `feat`: production code, configuration, or a user-visible capability
+- `docs`: documentation-only changes, including plans and ERD updates
+- `test`: test-only changes with no production behavior change
+
+Commit by functional vertical slice, not by technical layer:
+
+- One API behavior or one shared foundation capability per commit.
+- Include the Repository, Service, Controller, DTO, and tests for that behavior in the same `feat` commit.
+- Never combine Create, Read, Update, or Delete behaviors in one commit.
+- Split Board list and Board detail into separate Read commits because they have different queries and transaction behavior.
+- Keep OpenAPI, Docker runtime configuration, and README documentation in separate commits.
+- Do not create layer-only commits such as "add repositories" or "add controllers".
+
+Keep the type lowercase, write a concise imperative summary, and do not end the subject with a period. Each commit must contain one logical change.
+
+When a feature includes its tests, use `feat`. Use `test` only when adding or correcting tests without changing production code. Keep unrelated documentation in a separate `docs` commit.
+
+Examples:
+
+```text
+feat: add board creation endpoint
+docs: document local Tomcat deployment
+test: cover comment ownership validation
+```
