@@ -1,0 +1,40 @@
+{
+  "openapi": "3.0.3",
+  "info": {"title": "Board REST API", "version": "1.0.0", "description": "순수 Spring MVC 게시판 API"},
+  "tags": [
+    {"name": "Board", "description": "게시글 API"},
+    {"name": "Comment", "description": "1-depth 댓글 API"}
+  ],
+  "paths": {
+    "/api/boards": {
+      "post": {"tags": ["Board"], "operationId": "createBoard", "summary": "게시글 생성", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/BoardCreateRequest"}}}}, "responses": {"201": {"description": "생성 성공"}, "400": {"description": "검증 실패"}}},
+      "get": {"tags": ["Board"], "operationId": "listBoards", "summary": "게시글 목록", "parameters": [{"name": "page", "in": "query", "schema": {"type": "integer", "minimum": 0, "default": 0}}, {"name": "size", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 100, "default": 10}}], "responses": {"200": {"description": "조회 성공"}, "400": {"description": "검증 실패"}}}
+    },
+    "/api/boards/{id}": {
+      "get": {"tags": ["Board"], "operationId": "getBoard", "summary": "게시글 상세", "parameters": [{"$ref": "#/components/parameters/BoardId"}], "responses": {"200": {"description": "조회 성공"}, "404": {"description": "게시글 없음"}}},
+      "put": {"tags": ["Board"], "operationId": "updateBoard", "summary": "게시글 수정", "parameters": [{"$ref": "#/components/parameters/BoardId"}], "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/BoardUpdateRequest"}}}}, "responses": {"200": {"description": "수정 성공"}, "400": {"description": "검증 실패"}, "403": {"description": "비밀번호 불일치"}, "404": {"description": "게시글 없음"}}},
+      "delete": {"tags": ["Board"], "operationId": "deleteBoard", "summary": "게시글 삭제", "parameters": [{"$ref": "#/components/parameters/BoardId"}, {"name": "password", "in": "query", "required": true, "schema": {"type": "string", "minLength": 4, "maxLength": 16}}], "responses": {"200": {"description": "삭제 성공"}, "400": {"description": "검증 실패"}, "403": {"description": "비밀번호 불일치"}, "404": {"description": "게시글 없음"}}}
+    },
+    "/api/boards/{boardId}/comments": {
+      "post": {"tags": ["Comment"], "operationId": "createComment", "summary": "댓글 생성", "parameters": [{"$ref": "#/components/parameters/BoardIdNamed"}], "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/CommentCreateRequest"}}}}, "responses": {"201": {"description": "생성 성공"}, "400": {"description": "검증 실패"}, "404": {"description": "게시글 없음"}}},
+      "get": {"tags": ["Comment"], "operationId": "listComments", "summary": "댓글 목록", "parameters": [{"$ref": "#/components/parameters/BoardIdNamed"}], "responses": {"200": {"description": "조회 성공"}, "404": {"description": "게시글 없음"}}}
+    },
+    "/api/boards/{boardId}/comments/{commentId}": {
+      "put": {"tags": ["Comment"], "operationId": "updateComment", "summary": "댓글 수정", "parameters": [{"$ref": "#/components/parameters/BoardIdNamed"}, {"$ref": "#/components/parameters/CommentId"}], "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/CommentUpdateRequest"}}}}, "responses": {"200": {"description": "수정 성공"}, "400": {"description": "검증 실패"}, "404": {"description": "댓글 없음 또는 소속 불일치"}}},
+      "delete": {"tags": ["Comment"], "operationId": "deleteComment", "summary": "댓글 삭제", "parameters": [{"$ref": "#/components/parameters/BoardIdNamed"}, {"$ref": "#/components/parameters/CommentId"}], "responses": {"200": {"description": "삭제 성공"}, "404": {"description": "댓글 없음 또는 소속 불일치"}}}
+    }
+  },
+  "components": {
+    "parameters": {
+      "BoardId": {"name": "id", "in": "path", "required": true, "schema": {"type": "integer", "format": "int64"}},
+      "BoardIdNamed": {"name": "boardId", "in": "path", "required": true, "schema": {"type": "integer", "format": "int64"}},
+      "CommentId": {"name": "commentId", "in": "path", "required": true, "schema": {"type": "integer", "format": "int64"}}
+    },
+    "schemas": {
+      "BoardCreateRequest": {"type": "object", "required": ["title", "writer", "password"], "properties": {"title": {"type": "string", "maxLength": 200}, "content": {"type": "string", "maxLength": 10000}, "writer": {"type": "string", "maxLength": 100}, "password": {"type": "string", "minLength": 4, "maxLength": 16, "writeOnly": true}}},
+      "BoardUpdateRequest": {"type": "object", "required": ["title", "password"], "properties": {"title": {"type": "string", "maxLength": 200}, "content": {"type": "string", "maxLength": 10000}, "password": {"type": "string", "minLength": 4, "maxLength": 16, "writeOnly": true}}},
+      "CommentCreateRequest": {"type": "object", "required": ["content", "writer"], "properties": {"content": {"type": "string", "maxLength": 1000}, "writer": {"type": "string", "maxLength": 100}}},
+      "CommentUpdateRequest": {"type": "object", "required": ["content"], "properties": {"content": {"type": "string", "maxLength": 1000}}}
+    }
+  }
+}
