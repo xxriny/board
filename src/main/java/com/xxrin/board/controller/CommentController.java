@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,5 +49,12 @@ public class CommentController {
             @Valid @RequestBody CommentUpdateRequest request) {
         return ResponseEntity.ok(ApiResponse.success(
                 commentService.update(boardId, commentId, request), "댓글이 수정되었습니다."));
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<ApiResponse<Void>> delete(
+            @PathVariable Long boardId, @PathVariable Long commentId) {
+        commentService.delete(boardId, commentId);
+        return ResponseEntity.ok(ApiResponse.success(null, "댓글이 삭제되었습니다."));
     }
 }

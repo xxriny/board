@@ -52,6 +52,11 @@ public class CommentService {
         return CommentResponse.from(comment);
     }
 
+    @Transactional
+    public void delete(Long boardId, Long commentId) {
+        commentRepository.delete(findComment(boardId, commentId));
+    }
+
     private Comment findComment(Long boardId, Long commentId) {
         return commentRepository.findByBoardIdAndId(boardId, commentId)
                 .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));

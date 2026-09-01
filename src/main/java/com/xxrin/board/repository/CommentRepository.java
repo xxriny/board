@@ -38,4 +38,8 @@ public class CommentRepository {
                 .getResultStream()
                 .findFirst();
     }
+
+    public void delete(Comment comment) {
+        entityManager.remove(comment);
+    }
 }
