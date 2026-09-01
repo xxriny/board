@@ -66,6 +66,7 @@ public class Comment {
     /** 댓글 작성자는 유지하고 내용만 변경한다. */
     public void update(String content) {
         this.content = content;
+        this.updatedAt = LocalDateTime.now();
     }
 
     @PrePersist
