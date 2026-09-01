@@ -20,7 +20,7 @@
 - Package a WAR for external Tomcat 10.1.
 - Support only one-depth comments.
 - Write a failing behavior test before each production implementation.
-- After foundation work, execute Board C → R → U → D and then Comment C → R → D.
+- After foundation work, execute Board C → R → U → D and then Comment C → R → U → D.
 - Complete Repository → Service → Controller behavior inside one slice before moving to the next slice.
 - Create one commit per functional slice; never group multiple CRUD behaviors or commit by technical layer.
 
@@ -165,7 +165,23 @@
 - [ ] Run the slice test and full suite.
 - [ ] Commit with `feat: add comment read API`.
 
-### Task 9: Comment Delete slice
+### Task 9: Comment Update slice
+
+**Files:**
+- Create: `dto/request/CommentUpdateRequest.java`
+- Modify: Comment Repository, Service, and Controller
+- Test: `src/test/java/com/xxrin/board/comment/CommentUpdateTest.java`
+
+**Interfaces:**
+- Produces: content-only update and `PUT /api/boards/{boardId}/comments/{commentId}`.
+
+- [ ] Write failing tests for success, invalid content, missing Comment, and ownership mismatch.
+- [ ] Implement update request, composite lookup, transactional dirty-checking update, and nested PUT controller.
+- [ ] Assert writer, Board, and createdAt remain unchanged while updatedAt advances.
+- [ ] Run the slice test and full suite.
+- [ ] Commit with `feat: add comment update API`.
+
+### Task 10: Comment Delete slice
 
 **Files:**
 - Modify: Comment Repository, Service, and Controller
@@ -180,7 +196,7 @@
 - [ ] Run the slice test and full suite.
 - [ ] Commit with `feat: add comment deletion API`.
 
-### Task 10: OpenAPI, Docker, and delivery verification
+### Task 11: OpenAPI, Docker, and delivery verification
 
 **Files:**
 - Modify: build/config/controllers and `.gitignore`
@@ -190,7 +206,7 @@
 **Interfaces:**
 - Produces: OpenAPI paths/tags, Swagger UI, MySQL Compose service, and run guide.
 
-- [ ] Write failing tests for OpenAPI 3, all eight operations, Board/Comment tags, and Swagger UI.
+- [ ] Write failing tests for OpenAPI 3, all nine operations, Board/Comment tags, and Swagger UI.
 - [ ] Add Spring 6-compatible non-Boot OpenAPI WebMVC/UI configuration and annotations.
 - [ ] Run OpenAPI tests and the full suite, then commit only this capability with `feat: add OpenAPI documentation endpoints`.
 - [ ] Create MySQL 8 Compose with port 3306, `board_db`, health check, named volume, and `.env.example`.
@@ -201,8 +217,8 @@
 
 ## Definition of Done
 
-- [ ] CRUD slices were completed in Board C → R → U → D, then Comment C → R → D order.
-- [ ] All eight APIs return the documented status and `ApiResponse<T>` JSON shape.
+- [ ] CRUD slices were completed in Board C → R → U → D, then Comment C → R → U → D order.
+- [ ] All nine APIs return the documented status and `ApiResponse<T>` JSON shape.
 - [ ] Missing resources return 404 and invalid requests return field-specific 400 responses.
 - [ ] Board detail increments view count and Board deletion cascades to Comments.
 - [ ] No Spring Data JPA, Boot bootstrap, `web.xml`, or view technology exists.

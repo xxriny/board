@@ -4,7 +4,7 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": 0,
+    "scrollTop": -116,
     "scrollLeft": 0,
     "zoomLevel": 1,
     "show": 431,
@@ -51,6 +51,7 @@
           "boardTitle",
           "boardContent",
           "boardWriter",
+          "boardPasswordHash",
           "boardViewCount",
           "boardCreatedAt",
           "boardUpdatedAt"
@@ -60,6 +61,7 @@
           "boardTitle",
           "boardContent",
           "boardWriter",
+          "boardPasswordHash",
           "boardViewCount",
           "boardCreatedAt",
           "boardUpdatedAt"
@@ -86,14 +88,16 @@
           "commentContent",
           "commentWriter",
           "commentBoardId",
-          "commentCreatedAt"
+          "commentCreatedAt",
+          "0KTDN_ZKSgeyndZcmYIHF"
         ],
         "seqColumnIds": [
           "commentId",
           "commentContent",
           "commentWriter",
           "commentBoardId",
-          "commentCreatedAt"
+          "commentCreatedAt",
+          "0KTDN_ZKSgeyndZcmYIHF"
         ],
         "ui": {
           "x": 590,
@@ -104,7 +108,7 @@
           "color": "#69DB7C"
         },
         "meta": {
-          "updateAt": 1788239534081,
+          "updateAt": 1788243393253,
           "createAt": 0
         }
       }
@@ -182,6 +186,26 @@
           "keys": 0,
           "widthName": 60,
           "widthComment": 68,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "boardPasswordHash": {
+        "id": "boardPasswordHash",
+        "tableId": "board",
+        "name": "password_hash",
+        "comment": "게시글 비밀번호 해시",
+        "dataType": "String",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 92,
+          "widthComment": 100,
           "widthDataType": 60,
           "widthDefault": 60
         },
@@ -349,6 +373,26 @@
           "updateAt": 0,
           "createAt": 0
         }
+      },
+      "0KTDN_ZKSgeyndZcmYIHF": {
+        "id": "0KTDN_ZKSgeyndZcmYIHF",
+        "tableId": "comment",
+        "name": "updated_at",
+        "comment": "댓글 수정 시각",
+        "dataType": "LocalDateTime",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 67,
+          "widthComment": 71,
+          "widthDataType": 61,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1788243440166,
+          "createAt": 1788243393252
+        }
       }
     },
     "relationshipEntities": {
@@ -372,7 +416,7 @@
             "commentBoardId"
           ],
           "x": 590,
-          "y": 369,
+          "y": 381,
           "direction": 1
         },
         "meta": {

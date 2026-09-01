@@ -50,7 +50,8 @@ After the shared Gradle, Spring, JPA, domain, DTO wrapper, validation, and excep
 4. Board Delete
 5. Comment Create
 6. Comment Read
-7. Comment Delete
+7. Comment Update
+8. Comment Delete
 
 For each slice, follow RED → GREEN → REFACTOR across Repository, Service, Controller, and tests before starting the next slice. Do not implement all repositories, then all services, then all controllers.
 
