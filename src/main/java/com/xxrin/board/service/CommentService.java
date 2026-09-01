@@ -3,6 +3,7 @@ package com.xxrin.board.service;
 import com.xxrin.board.domain.Board;
 import com.xxrin.board.domain.Comment;
 import com.xxrin.board.dto.request.CommentCreateRequest;
+import com.xxrin.board.dto.request.CommentUpdateRequest;
 import com.xxrin.board.dto.response.CommentResponse;
 import com.xxrin.board.exception.EntityNotFoundException;
 import com.xxrin.board.repository.BoardRepository;
@@ -42,5 +43,17 @@ public class CommentService {
         return commentRepository.findAllByBoardId(boardId).stream()
                 .map(CommentResponse::from)
                 .toList();
+    }
+
+    @Transactional
+    public CommentResponse update(Long boardId, Long commentId, CommentUpdateRequest request) {
+        Comment comment = findComment(boardId, commentId);
+        comment.update(request.content());
+        return CommentResponse.from(comment);
+    }
+
+    private Comment findComment(Long boardId, Long commentId) {
+        return commentRepository.findByBoardIdAndId(boardId, commentId)
+                .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
     }
 }
