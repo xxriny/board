@@ -1,0 +1,70 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+group = 'com.xxrin'
+version = '1.0.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    springVersion = '6.2.12'
+    hibernateVersion = '6.6.25.Final'
+    jacksonVersion = '2.19.2'
+    junitVersion = '5.13.4'
+    testcontainersVersion = '1.21.3'
+}
+
+dependencies {
+    implementation "org.springframework:spring-context:${springVersion}"
+    implementation "org.springframework:spring-webmvc:${springVersion}"
+    implementation "org.springframework:spring-orm:${springVersion}"
+
+    implementation "org.hibernate.orm:hibernate-core:${hibernateVersion}"
+    implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+    implementation 'com.zaxxer:HikariCP:6.3.1'
+    runtimeOnly 'com.mysql:mysql-connector-j:8.4.0'
+
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.2.Final'
+    runtimeOnly 'org.glassfish:jakarta.el:4.0.2'
+
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    compileOnly 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
+
+    testImplementation platform("org.junit:junit-bom:${junitVersion}")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation "org.springframework:spring-test:${springVersion}"
+    testImplementation 'org.assertj:assertj-core:3.27.4'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.19.0'
+    testImplementation platform("org.testcontainers:testcontainers-bom:${testcontainersVersion}")
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:mysql'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.42'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.42'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-parameters']
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+war {
+    archiveFileName = 'board.war'
+}
