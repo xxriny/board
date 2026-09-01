@@ -1,0 +1,32 @@
+package com.xxrin.board.comment;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import com.xxrin.board.domain.Board;
+import com.xxrin.board.domain.Comment;
+import com.xxrin.board.repository.BoardRepository;
+import com.xxrin.board.repository.CommentRepository;
+import com.xxrin.board.service.CommentService;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
+
+class CommentReadTest {
+
+    @Test
+    void listsCommentsForExistingBoard() {
+        BoardRepository boards = mock(BoardRepository.class);
+        CommentRepository comments = mock(CommentRepository.class);
+        Board board = Board.builder().title("제목").writer("작성자").passwordHash("hash").build();
+        Comment comment = Comment.builder().content("댓글").writer("댓글 작성자").board(board).build();
+        ReflectionTestUtils.setField(comment, "id", 10L);
+        when(boards.findById(1L)).thenReturn(Optional.of(board));
+        when(comments.findAllByBoardId(1L)).thenReturn(List.of(comment));
+
+        assertThat(new CommentService(boards, comments).findAll(1L))
+                .extracting("id").containsExactly(10L);
+    }
+}
