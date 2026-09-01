@@ -30,10 +30,9 @@ class CommentUpdateTest {
 
         var response = new CommentService(mock(BoardRepository.class), comments)
                 .update(1L, 10L, new CommentUpdateRequest("수정 댓글"));
-        ReflectionTestUtils.invokeMethod(comment, "preUpdate");
 
         assertThat(response.content()).isEqualTo("수정 댓글");
-        assertThat(comment.getUpdatedAt()).isAfter(before);
+        assertThat(response.updatedAt()).isAfter(before);
     }
 
     @Test
