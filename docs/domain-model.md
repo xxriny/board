@@ -45,11 +45,12 @@ JPA 테이블명은 `boards`다. `comments`는 `@OneToMany(mappedBy = "board", c
 | 댓글 식별자 | `id` | `id` | `Long` | PK, identity |
 | 댓글 내용 | `content` | `content` | `String` | not null, 최대 1000자 |
 | 댓글 작성자 | `writer` | `writer` | `String` | not null, 최대 100자 |
+| 댓글 비밀번호 해시 | `passwordHash` | `password_hash` | `String` | not null, BCrypt 60자 |
 | 게시글 식별자 | `board` | `board_id` | `Board` | FK, not null, lazy |
 | 생성 시각 | `createdAt` | `created_at` | `LocalDateTime` | not null |
 | 수정 시각 | `updatedAt` | `updated_at` | `LocalDateTime` | not null |
 
-JPA 테이블명은 `comments`다. `board`는 `@ManyToOne(fetch = FetchType.LAZY, optional = false)`와 `@JoinColumn(name = "board_id", nullable = false)`로 매핑한다. 부모 댓글 필드는 만들지 않는다. 댓글 수정은 `update(String content)`로 내용만 변경하며 작성자와 소속 게시글은 유지한다.
+JPA 테이블명은 `comments`다. `board`는 `@ManyToOne(fetch = FetchType.LAZY, optional = false)`와 `@JoinColumn(name = "board_id", nullable = false)`로 매핑한다. 부모 댓글 필드는 만들지 않는다. 댓글 비밀번호 원문은 저장하지 않고 Service에서 BCrypt로 해시해 `password_hash`에 저장한다. 수정·삭제 시 입력 비밀번호와 비교하며 외부 응답에는 해시를 포함하지 않는다. 댓글 수정은 `update(String content)`로 내용과 `updatedAt`을 즉시 변경해 수정 응답에도 새 시각을 포함하며, `@PreUpdate`에서도 수정 시각 갱신을 보장한다. 작성자와 소속 게시글은 유지한다.
 
 ## 엔티티 구현 규칙
 

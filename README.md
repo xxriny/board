@@ -47,7 +47,7 @@ WAR 파일명에 따라 context path는 `/board`다.
 - OpenAPI JSON: `http://localhost:8080/board/v3/api-docs`
 - 게시글 API: `http://localhost:8080/board/api/boards`
 
-ROOT 애플리케이션으로 배포했다면 URL에서 `/board`를 제거한다.
+현재 OpenAPI server URL도 `/board`로 설정되어 있으므로 `board.war` 파일명을 유지한다. 다른 context path로 배포하려면 `src/main/resources/openapi.json`의 `servers` 값도 함께 변경한다.
 
 ## API 빠른 확인
 
@@ -65,19 +65,19 @@ curl -X PUT http://localhost:8080/board/api/boards/1 \
 
 curl -X POST http://localhost:8080/board/api/boards/1/comments \
   -H 'Content-Type: application/json' \
-  -d '{"content":"댓글","writer":"댓글 작성자"}'
+  -d '{"content":"댓글","writer":"댓글 작성자","password":"1234"}'
 
 curl http://localhost:8080/board/api/boards/1/comments
 
 curl -X PUT http://localhost:8080/board/api/boards/1/comments/1 \
   -H 'Content-Type: application/json' \
-  -d '{"content":"수정 댓글"}'
+  -d '{"content":"수정 댓글","password":"1234"}'
 
-curl -X DELETE http://localhost:8080/board/api/boards/1/comments/1
+curl -X DELETE 'http://localhost:8080/board/api/boards/1/comments/1?password=1234'
 curl -X DELETE 'http://localhost:8080/board/api/boards/1?password=1234'
 ```
 
-게시글 비밀번호는 BCrypt 해시로 저장하며 응답에 노출하지 않는다. 게시글 수정·삭제 시 작성 당시 비밀번호가 필요하다.
+게시글과 댓글 비밀번호는 BCrypt 해시로 저장하며 응답에 노출하지 않는다. 각 리소스의 수정·삭제 시 작성 당시 비밀번호가 필요하다.
 
 ## DataGrip 연결
 

@@ -70,12 +70,12 @@ Controller가 Repository를 직접 호출하거나 Repository가 DTO/HTTP 타입
 
 ## OpenAPI 결정
 
-Spring 6/Jakarta와 호환되는 springdoc WebMVC 구성을 사용하되 Spring Boot 애플리케이션 부트스트랩은 사용하지 않는다. 구현 첫 단계에서 Gradle 의존성 보고서와 Spring 컨텍스트 테스트로 Boot 자동구성 없이 동작하는 조합을 검증한다. Springfox 3은 Jakarta 기반 Spring 6과 맞지 않으므로 사용하지 않는다.
+Spring Boot 의존성을 피하기 위해 springdoc starter 대신 Swagger Core Jakarta 어노테이션과 Swagger UI WebJar를 사용한다. `openapi.json`을 OpenAPI 3 계약의 기준으로 관리하고 `OpenApiController`가 `/v3/api-docs`와 `/swagger-ui/index.html`을 제공한다. `WebConfig`는 WebJar 정적 리소스와 JSON, 문자열, Resource 응답 컨버터를 명시적으로 등록한다. Springfox 3은 Jakarta 기반 Spring 6과 맞지 않으므로 사용하지 않는다.
 
 ## 테스트 경계
 
 - 엔티티 테스트는 Spring 없이 실행한다.
 - Service 테스트는 Repository를 대역으로 사용해 유스케이스와 예외를 검증한다.
 - MVC 테스트는 `MockMvc` standalone 또는 명시적 WebConfig 컨텍스트로 JSON 계약을 검증한다.
-- Repository/트랜잭션 테스트는 Testcontainers MySQL 8로 실제 Hibernate 매핑과 JPQL을 검증한다.
+- Testcontainers MySQL 8 통합 테스트는 실제 Hibernate 매핑과 게시글 삭제 cascade를 검증한다.
 - 최종 검증은 `clean test war`와 Docker Compose 구성 검증으로 완료한다.

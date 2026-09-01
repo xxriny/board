@@ -34,6 +34,9 @@ public class Comment {
     @Column(nullable = false, length = 100)
     private String writer;
 
+    @Column(name = "password_hash", nullable = false, length = 60)
+    private String passwordHash;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
@@ -45,9 +48,10 @@ public class Comment {
     private LocalDateTime updatedAt;
 
     @Builder
-    private Comment(String content, String writer, Board board) {
+    private Comment(String content, String writer, String passwordHash, Board board) {
         this.content = content;
         this.writer = writer;
+        this.passwordHash = passwordHash;
         if (board != null) {
             board.addComment(this);
         }

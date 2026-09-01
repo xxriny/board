@@ -53,18 +53,21 @@ hibernate.format_sql=true
 
 ```bash
 ./gradlew clean test war
+set -a
+source .env
+set +a
 cp build/libs/board.war "$CATALINA_HOME/webapps/board.war"
 "$CATALINA_HOME/bin/catalina.sh" run
 ```
 
-WAR context path가 `/board`이면 Swagger UI는 `http://localhost:8080/board/swagger-ui/index.html`, OpenAPI JSON은 `http://localhost:8080/board/v3/api-docs`에서 확인한다. ROOT context로 배포하면 `/board`를 제거한다.
+현재 정적 OpenAPI 명세의 server URL은 `/board`이므로 WAR 파일명을 `board.war`로 유지한다. Swagger UI는 `http://localhost:8080/board/swagger-ui/index.html`, OpenAPI JSON은 `http://localhost:8080/board/v3/api-docs`에서 확인한다. 다른 context path로 배포하려면 `openapi.json`의 `servers` 값도 함께 변경해야 한다.
 
 ## DataGrip
 
 | 항목 | 값 |
 | --- | --- |
 | Host | `localhost` |
-| Port | `3306` |
+| Port | `.env`의 `DB_PORT` (기본 `3306`) |
 | Database | `board_db` |
 | User | `.env`의 `MYSQL_USER` |
 | Password | `.env`의 `MYSQL_PASSWORD` |
