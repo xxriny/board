@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,5 +66,14 @@ public class BoardController {
             @PathVariable Long id, @Valid @RequestBody BoardUpdateRequest request) {
         return ResponseEntity.ok(ApiResponse.success(
                 boardService.update(id, request), "게시글이 수정되었습니다."));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> delete(
+            @PathVariable Long id,
+            @RequestParam @jakarta.validation.constraints.NotBlank(
+                    message = "비밀번호는 필수입니다.") String password) {
+        boardService.delete(id, password);
+        return ResponseEntity.ok(ApiResponse.success(null, "게시글이 삭제되었습니다."));
     }
 }

@@ -35,4 +35,8 @@ public class BoardRepository {
     public Optional<Board> findById(Long id) {
         return Optional.ofNullable(entityManager.find(Board.class, id));
     }
+
+    public void delete(Board board) {
+        entityManager.remove(board);
+    }
 }

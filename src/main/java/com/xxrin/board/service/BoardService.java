@@ -69,6 +69,14 @@ public class BoardService {
         return BoardResponse.from(board);
     }
 
+    @Transactional
+    public void delete(Long id, String password) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+        verifyPassword(password, board.getPasswordHash());
+        boardRepository.delete(board);
+    }
+
     private void verifyPassword(String rawPassword, String passwordHash) {
         if (passwordHash == null || !passwordEncoder.matches(rawPassword, passwordHash)) {
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
