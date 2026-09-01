@@ -3,7 +3,9 @@ package com.xxrin.board.service;
 import com.xxrin.board.domain.Board;
 import com.xxrin.board.dto.request.BoardCreateRequest;
 import com.xxrin.board.dto.response.BoardResponse;
+import com.xxrin.board.dto.response.PageResponse;
 import com.xxrin.board.repository.BoardRepository;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,5 +27,13 @@ public class BoardService {
                 .writer(request.writer())
                 .build();
         return BoardResponse.from(boardRepository.save(board));
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponse<BoardResponse> findAll(int page, int size) {
+        List<BoardResponse> content = boardRepository.findPage(page, size).stream()
+                .map(BoardResponse::from)
+                .toList();
+        return PageResponse.of(content, page, size, boardRepository.count());
     }
 }
