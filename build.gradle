@@ -45,6 +45,7 @@ dependencies {
 
     testImplementation platform("org.junit:junit-bom:${junitVersion}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation "org.springframework:spring-test:${springVersion}"
     testImplementation 'org.assertj:assertj-core:3.27.4'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.19.0'
