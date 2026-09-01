@@ -5,11 +5,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.Test;
 import com.xxrin.board.controller.OpenApiController;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,5 +48,15 @@ class OpenApiIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         assertThat(html).contains("SwaggerUIBundle", "../../v3/api-docs");
+    }
+
+    @Test
+    void webConfigurationSupportsResourceAndHtmlResponses() {
+        List<HttpMessageConverter<?>> converters = new ArrayList<>();
+
+        new WebConfig().configureMessageConverters(converters);
+
+        assertThat(converters).anyMatch(ResourceHttpMessageConverter.class::isInstance);
+        assertThat(converters).anyMatch(StringHttpMessageConverter.class::isInstance);
     }
 }
