@@ -1,9 +1,10 @@
 package com.xxrin.board.controller;
 
 import com.xxrin.board.dto.request.BoardCreateRequest;
+import com.xxrin.board.dto.request.BoardUpdateRequest;
 import com.xxrin.board.dto.response.ApiResponse;
-import com.xxrin.board.dto.response.BoardResponse;
 import com.xxrin.board.dto.response.BoardDetailResponse;
+import com.xxrin.board.dto.response.BoardResponse;
 import com.xxrin.board.dto.response.PageResponse;
 import com.xxrin.board.service.BoardService;
 import jakarta.validation.constraints.Max;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,5 +58,12 @@ public class BoardController {
     public ResponseEntity<ApiResponse<BoardDetailResponse>> findDetail(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.success(
                 boardService.findDetail(id), "게시글 상세를 조회했습니다."));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<BoardResponse>> update(
+            @PathVariable Long id, @Valid @RequestBody BoardUpdateRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(
+                boardService.update(id, request), "게시글이 수정되었습니다."));
     }
 }

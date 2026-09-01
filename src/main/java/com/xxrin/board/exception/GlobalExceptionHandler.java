@@ -18,6 +18,12 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidPassword(InvalidPasswordException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.error(exception.getMessage()));
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotFound(EntityNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

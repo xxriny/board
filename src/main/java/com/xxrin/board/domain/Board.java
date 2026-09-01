@@ -40,6 +40,9 @@ public class Board {
     @Column(nullable = false, length = 100)
     private String writer;
 
+    @Column(name = "password_hash", nullable = false, length = 60)
+    private String passwordHash;
+
     @Column(name = "view_count", nullable = false)
     private int viewCount;
 
@@ -54,10 +57,11 @@ public class Board {
     private final List<Comment> comments = new ArrayList<>();
 
     @Builder
-    private Board(String title, String content, String writer) {
+    private Board(String title, String content, String writer, String passwordHash) {
         this.title = title;
         this.content = content;
         this.writer = writer;
+        this.passwordHash = passwordHash;
     }
 
     /** 수정 가능한 제목과 본문만 변경한다. */

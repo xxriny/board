@@ -38,7 +38,7 @@ class BoardCreateTest {
         BoardService service = new BoardService(repository);
 
         BoardResponse response = service.create(
-                new BoardCreateRequest("제목", "내용", "작성자"));
+                new BoardCreateRequest("제목", "내용", "작성자", "1234"));
 
         assertThat(response.id()).isEqualTo(1L);
         assertThat(response.title()).isEqualTo("제목");
@@ -57,7 +57,7 @@ class BoardCreateTest {
         String body = mockMvc.perform(post("/api/boards")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"title":"제목","content":"내용","writer":"작성자"}
+                                {"title":"제목","content":"내용","writer":"작성자","password":"1234"}
                                 """))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
@@ -75,7 +75,7 @@ class BoardCreateTest {
         String body = mockMvc.perform(post("/api/boards")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"title":" ","content":"내용","writer":""}
+                                {"title":" ","content":"내용","writer":"","password":"1234"}
                                 """))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
