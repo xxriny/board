@@ -27,6 +27,8 @@ class OpenApiIntegrationTest {
             assertThat(input).isNotNull();
             JsonNode root = new ObjectMapper().readTree(input);
             assertThat(root.path("openapi").asText()).startsWith("3.");
+            assertThat(root.path("servers")).hasSize(1);
+            assertThat(root.path("servers").get(0).path("url").asText()).isEqualTo("/board");
             long operations = StreamSupport.stream(root.path("paths").spliterator(), false)
                     .flatMap(path -> StreamSupport.stream(path.spliterator(), false))
                     .filter(node -> node.has("operationId"))
@@ -47,7 +49,7 @@ class OpenApiIntegrationTest {
         String html = mvc.perform(get("/swagger-ui/index.html"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-        assertThat(html).contains("SwaggerUIBundle", "../../v3/api-docs");
+        assertThat(html).contains("SwaggerUIBundle", "../v3/api-docs");
     }
 
     @Test

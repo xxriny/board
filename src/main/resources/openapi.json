@@ -1,6 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {"title": "Board REST API", "version": "1.0.0", "description": "순수 Spring MVC 게시판 API"},
+  "servers": [
+    {"url": "/board", "description": "Tomcat board WAR context"}
+  ],
   "tags": [
     {"name": "Board", "description": "게시글 API"},
     {"name": "Comment", "description": "1-depth 댓글 API"}
