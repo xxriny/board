@@ -5,9 +5,11 @@ import com.xxrin.board.dto.response.ApiResponse;
 import com.xxrin.board.dto.response.CommentResponse;
 import com.xxrin.board.service.CommentService;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,5 +31,11 @@ public class CommentController {
             @PathVariable Long boardId, @Valid @RequestBody CommentCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(
                 commentService.create(boardId, request), "댓글이 생성되었습니다."));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<CommentResponse>>> findAll(@PathVariable Long boardId) {
+        return ResponseEntity.ok(ApiResponse.success(
+                commentService.findAll(boardId), "댓글 목록을 조회했습니다."));
     }
 }

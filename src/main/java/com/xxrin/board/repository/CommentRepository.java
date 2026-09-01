@@ -3,6 +3,7 @@ package com.xxrin.board.repository;
 import com.xxrin.board.domain.Comment;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.util.List;
 import org.springframework.stereotype.Repository;
 
 /** EntityManager를 직접 사용하는 댓글 영속성 컴포넌트다. */
@@ -15,5 +16,14 @@ public class CommentRepository {
     public Comment save(Comment comment) {
         entityManager.persist(comment);
         return comment;
+    }
+
+    public List<Comment> findAllByBoardId(Long boardId) {
+        return entityManager.createQuery("""
+                        select c from Comment c where c.board.id = :boardId
+                        order by c.createdAt asc, c.id asc
+                        """, Comment.class)
+                .setParameter("boardId", boardId)
+                .getResultList();
     }
 }

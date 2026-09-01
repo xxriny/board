@@ -7,6 +7,7 @@ import com.xxrin.board.dto.response.CommentResponse;
 import com.xxrin.board.exception.EntityNotFoundException;
 import com.xxrin.board.repository.BoardRepository;
 import com.xxrin.board.repository.CommentRepository;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,5 +33,14 @@ public class CommentService {
                 .board(board)
                 .build();
         return CommentResponse.from(commentRepository.save(comment));
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommentResponse> findAll(Long boardId) {
+        boardRepository.findById(boardId)
+                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+        return commentRepository.findAllByBoardId(boardId).stream()
+                .map(CommentResponse::from)
+                .toList();
     }
 }
