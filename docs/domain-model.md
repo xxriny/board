@@ -20,11 +20,14 @@ boards 1 ───────── 0..N comments
 | 게시글 제목 | `title` | `title` | `String` | not null, 최대 200자 |
 | 게시글 내용 | `content` | `content` | `String` | TEXT, null 허용 |
 | 게시글 작성자 | `writer` | `writer` | `String` | not null, 최대 100자 |
+| 게시글 비밀번호 해시 | `passwordHash` | `password_hash` | `String` | not null, BCrypt 60자 |
 | 조회수 | `viewCount` | `view_count` | `int` | not null, 기본값 0 |
 | 생성 시각 | `createdAt` | `created_at` | `LocalDateTime` | not null |
 | 수정 시각 | `updatedAt` | `updated_at` | `LocalDateTime` | not null |
 
 JPA 테이블명은 `boards`다. `comments`는 `@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)`로 매핑하며 컬렉션은 빈 `ArrayList`로 초기화한다.
+
+게시글 비밀번호 원문은 저장하지 않는다. Service에서 BCrypt로 해시해 `password_hash`에 저장하고 수정·삭제 요청 시 입력값과 비교한다. 외부 응답 DTO에는 해시를 포함하지 않는다.
 
 허용된 상태 변경 메서드:
 
