@@ -1,6 +1,6 @@
 # Spring MVC Board REST API Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Status (2026-09-01):** 구현과 Tomcat/MySQL smoke test를 완료했다. 아래 작업별 체크박스는 최초 계획의 범위를 보존한 기록이며, 실제 완료 여부는 하단 Definition of Done과 Git 커밋을 기준으로 판단한다.
 
 **Goal:** Build a WAR-deployed JSON REST API for boards and one-depth comments using non-Boot Spring MVC and direct JPA EntityManager access.
 
@@ -76,7 +76,7 @@
 **Interfaces:**
 - Produces: `BoardRepository.save`, `BoardService.create`, and `POST /api/boards` with 201.
 
-- [ ] Write failing validation tests for title, content, and writer constraints.
+- [ ] Write failing validation tests for title, content, writer, and password constraints.
 - [ ] Write a failing repository test proving persist assigns ID and timestamps.
 - [ ] Write a failing service test for creation and response mapping.
 - [ ] Write failing MockMvc tests for 201 and field-specific 400 JSON.
@@ -111,9 +111,9 @@
 - Test: `src/test/java/com/xxrin/board/board/BoardUpdateTest.java`
 
 **Interfaces:**
-- Produces: `BoardService.update` and `PUT /api/boards/{id}`.
+- Produces: password-protected `BoardService.update` and `PUT /api/boards/{id}`.
 
-- [ ] Write failing validation, service, and MockMvc tests for 200, 400, and 404.
+- [ ] Write failing validation, service, and MockMvc tests for 200, 400, 403, and 404.
 - [ ] Assert writer, ID, createdAt, and viewCount remain unchanged.
 - [ ] Implement update DTO, dirty-checking service method, and PUT controller method.
 - [ ] Run the slice test and full suite.
@@ -126,10 +126,10 @@
 - Test: `src/test/java/com/xxrin/board/board/BoardDeleteTest.java`
 
 **Interfaces:**
-- Produces: repository remove, service delete, and `DELETE /api/boards/{id}`.
+- Produces: repository remove, password verification, service delete, and `DELETE /api/boards/{id}?password={password}`.
 
 - [ ] Write a failing MySQL test that deletes a Board and verifies its Comments are gone after flush/clear.
-- [ ] Write failing service/controller tests for success and missing Board 404.
+- [ ] Write failing service/controller tests for success, password mismatch 403, and missing Board 404.
 - [ ] Implement repository remove, transactional delete, and DELETE controller method.
 - [ ] Run the slice test and full suite.
 - [ ] Commit with `feat: add board deletion API`.
@@ -207,7 +207,7 @@
 - Produces: OpenAPI paths/tags, Swagger UI, MySQL Compose service, and run guide.
 
 - [ ] Write failing tests for OpenAPI 3, all nine operations, Board/Comment tags, and Swagger UI.
-- [ ] Add Spring 6-compatible non-Boot OpenAPI WebMVC/UI configuration and annotations.
+- [ ] Add Swagger Core Jakarta annotations, static OpenAPI JSON, Swagger UI WebJar, and non-Boot Spring MVC resource handling.
 - [ ] Run OpenAPI tests and the full suite, then commit only this capability with `feat: add OpenAPI documentation endpoints`.
 - [ ] Create MySQL 8 Compose with port 3306, `board_db`, health check, named volume, and `.env.example`.
 - [ ] Run `docker compose config` and MySQL-backed tests, then commit only runtime configuration with `feat: add MySQL Docker runtime`.
@@ -217,11 +217,11 @@
 
 ## Definition of Done
 
-- [ ] CRUD slices were completed in Board C → R → U → D, then Comment C → R → U → D order.
-- [ ] All nine APIs return the documented status and `ApiResponse<T>` JSON shape.
-- [ ] Missing resources return 404 and invalid requests return field-specific 400 responses.
-- [ ] Board detail increments view count and Board deletion cascades to Comments.
-- [ ] No Spring Data JPA, Boot bootstrap, `web.xml`, or view technology exists.
-- [ ] `./gradlew clean test war` exits successfully.
-- [ ] Docker Compose and MySQL-backed tests pass when Docker is available.
-- [ ] Tomcat 10.1 serves the API and Swagger UI at the documented context path.
+- [x] CRUD slices were completed in Board C → R → U → D, then Comment C → R → U → D order.
+- [x] All nine APIs return the documented status and `ApiResponse<T>` JSON shape.
+- [x] Missing resources return 404 and invalid requests return field-specific 400 responses.
+- [x] Board detail increments view count and Board deletion cascades to Comments.
+- [x] No Spring Data JPA, Boot bootstrap, `web.xml`, or view technology exists.
+- [x] `./gradlew clean test war` exits successfully.
+- [x] Docker Compose and MySQL-backed tests pass when Docker is available.
+- [x] Tomcat 10.1 serves the API and Swagger UI at the `/board` context path.

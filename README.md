@@ -47,7 +47,7 @@ WAR 파일명에 따라 context path는 `/board`다.
 - OpenAPI JSON: `http://localhost:8080/board/v3/api-docs`
 - 게시글 API: `http://localhost:8080/board/api/boards`
 
-ROOT 애플리케이션으로 배포했다면 URL에서 `/board`를 제거한다.
+현재 OpenAPI server URL도 `/board`로 설정되어 있으므로 `board.war` 파일명을 유지한다. 다른 context path로 배포하려면 `src/main/resources/openapi.json`의 `servers` 값도 함께 변경한다.
 
 ## API 빠른 확인
 

@@ -49,7 +49,7 @@ JPA 테이블명은 `boards`다. `comments`는 `@OneToMany(mappedBy = "board", c
 | 생성 시각 | `createdAt` | `created_at` | `LocalDateTime` | not null |
 | 수정 시각 | `updatedAt` | `updated_at` | `LocalDateTime` | not null |
 
-JPA 테이블명은 `comments`다. `board`는 `@ManyToOne(fetch = FetchType.LAZY, optional = false)`와 `@JoinColumn(name = "board_id", nullable = false)`로 매핑한다. 부모 댓글 필드는 만들지 않는다. 댓글 수정은 `update(String content)`로 내용만 변경하며 작성자와 소속 게시글은 유지한다.
+JPA 테이블명은 `comments`다. `board`는 `@ManyToOne(fetch = FetchType.LAZY, optional = false)`와 `@JoinColumn(name = "board_id", nullable = false)`로 매핑한다. 부모 댓글 필드는 만들지 않는다. 댓글 수정은 `update(String content)`로 내용과 `updatedAt`을 즉시 변경해 수정 응답에도 새 시각을 포함하며, `@PreUpdate`에서도 수정 시각 갱신을 보장한다. 작성자와 소속 게시글은 유지한다.
 
 ## 엔티티 구현 규칙
 
