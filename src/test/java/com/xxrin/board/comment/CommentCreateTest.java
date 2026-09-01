@@ -13,6 +13,7 @@ import com.xxrin.board.repository.CommentRepository;
 import com.xxrin.board.service.CommentService;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 class CommentCreateTest {
 
@@ -20,14 +21,17 @@ class CommentCreateTest {
     void createsCommentForExistingBoard() {
         BoardRepository boards = mock(BoardRepository.class);
         CommentRepository comments = mock(CommentRepository.class);
+        PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
         Board board = Board.builder().title("제목").writer("작성자").passwordHash("hash").build();
         when(boards.findById(1L)).thenReturn(Optional.of(board));
         when(comments.save(any(Comment.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(passwordEncoder.encode("1234")).thenReturn("encoded-password");
 
-        var response = new CommentService(boards, comments)
-                .create(1L, new CommentCreateRequest("댓글", "댓글 작성자"));
+        var response = new CommentService(boards, comments, passwordEncoder)
+                .create(1L, new CommentCreateRequest("댓글", "댓글 작성자", "1234"));
 
         assertThat(response.content()).isEqualTo("댓글");
         assertThat(board.getComments()).hasSize(1);
+        assertThat(board.getComments().get(0).getPasswordHash()).isEqualTo("encoded-password");
     }
 }

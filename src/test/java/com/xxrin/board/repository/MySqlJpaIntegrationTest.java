@@ -67,7 +67,7 @@ class MySqlJpaIntegrationTest {
         entityManager.getTransaction().begin();
         Board board = Board.builder()
                 .title("제목").content("내용").writer("작성자").passwordHash("hash").build();
-        Comment.builder().content("댓글").writer("댓글 작성자").board(board).build();
+        Comment.builder().content("댓글").writer("댓글 작성자").passwordHash("comment-hash").board(board).build();
         entityManager.persist(board);
         entityManager.getTransaction().commit();
         Long boardId = board.getId();

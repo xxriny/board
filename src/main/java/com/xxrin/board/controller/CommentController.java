@@ -8,6 +8,7 @@ import com.xxrin.board.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /** 댓글 REST API의 HTTP 요청과 응답을 처리한다. */
@@ -49,7 +51,8 @@ public class CommentController {
 
     @PutMapping("/{commentId}")
     @Operation(summary = "댓글 수정", responses =
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "댓글 없음 또는 소속 불일치"))
+            {@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "비밀번호 불일치"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "댓글 없음 또는 소속 불일치")})
     public ResponseEntity<ApiResponse<CommentResponse>> update(
             @PathVariable Long boardId,
             @PathVariable Long commentId,
@@ -60,10 +63,13 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}")
     @Operation(summary = "댓글 삭제", responses =
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "댓글 없음 또는 소속 불일치"))
+            {@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "비밀번호 불일치"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "댓글 없음 또는 소속 불일치")})
     public ResponseEntity<ApiResponse<Void>> delete(
-            @PathVariable Long boardId, @PathVariable Long commentId) {
-        commentService.delete(boardId, commentId);
+            @PathVariable Long boardId,
+            @PathVariable Long commentId,
+            @RequestParam @NotBlank(message = "비밀번호는 필수입니다.") String password) {
+        commentService.delete(boardId, commentId, password);
         return ResponseEntity.ok(ApiResponse.success(null, "댓글이 삭제되었습니다."));
     }
 }
