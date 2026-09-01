@@ -72,7 +72,7 @@ Content-Type은 `application/json`이다.
 | GET | `/api/boards?page=0&size=10` | 200 | `PageResponse<BoardResponse>` |
 | GET | `/api/boards/{id}` | 200 | `BoardDetailResponse` |
 | PUT | `/api/boards/{id}` | 200 | `BoardResponse` |
-| DELETE | `/api/boards/{id}` | 200 | null |
+| DELETE | `/api/boards/{id}?password={password}` | 200 | null |
 | POST | `/api/boards/{boardId}/comments` | 201 | `CommentResponse` |
 | GET | `/api/boards/{boardId}/comments` | 200 | `List<CommentResponse>` |
 | PUT | `/api/boards/{boardId}/comments/{commentId}` | 200 | `CommentResponse` |
@@ -88,6 +88,10 @@ Content-Type은 `application/json`이다.
 ### 게시글 상세
 
 조회 성공 시 `viewCount`를 1 증가시킨 값을 반환한다. 댓글은 `createdAt ASC`, 동률이면 `id ASC` 순으로 포함한다.
+
+### 게시글 삭제
+
+필수 쿼리 파라미터 `password`를 게시글의 BCrypt 해시와 비교한다. 일치할 때만 게시글과 연관 댓글을 cascade 삭제한다.
 
 ### 댓글 삭제
 
