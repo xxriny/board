@@ -122,4 +122,4 @@ Repository는 `boardId`와 `commentId`를 동시에 조건으로 조회한다. �
 - `Board`: 게시글 생성, 목록, 상세, 수정, 삭제
 - `Comment`: 댓글 생성, 목록, 수정, 삭제
 
-Controller에는 `@Tag`, `@Operation`과 주요 오류 `@ApiResponse`를 선언한다. 전체 요청·응답·상태 코드 계약의 기준은 `src/main/resources/openapi.json`이다.
+Controller에는 `@Tag`, `@Operation`과 주요 오류 `@ApiResponse`를 선언한다. OpenAPI 문서는 springdoc이 `/v3/api-docs`에서 생성하고 Swagger UI는 `/swagger-ui/index.html`에서 제공한다.

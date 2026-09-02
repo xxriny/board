@@ -8,7 +8,7 @@
 build.gradle
 settings.gradle
 docker-compose.yml
-src/main/resources/db.properties
+src/main/resources/application.properties
 ```
 
 실제 `.env`는 Git에서 제외한다. `.env.example`에는 다음 키만 예시값과 함께 둔다.
@@ -32,35 +32,39 @@ health check는 다음 명령을 사용한다.
 mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD}
 ```
 
-## JPA 프로퍼티
+## Boot/JPA 프로퍼티
 
-`db.properties`는 환경변수를 다음 기본값과 연결한다.
+`application.properties`는 환경변수를 다음 기본값과 연결한다.
 
 ```properties
-db.driver=com.mysql.cj.jdbc.Driver
-db.url=jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${MYSQL_DATABASE:board_db}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-db.username=${MYSQL_USER:board_user}
-db.password=${MYSQL_PASSWORD:board_password}
-hibernate.dialect=org.hibernate.dialect.MySQLDialect
-hibernate.hbm2ddl.auto=update
-hibernate.show_sql=true
-hibernate.format_sql=true
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.url=jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${MYSQL_DATABASE:board_db}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+spring.datasource.username=${MYSQL_USER:board_user}
+spring.datasource.password=${MYSQL_PASSWORD:board_password}
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
 ```
 
-실제 구현에서는 Spring `Environment`로 환경변수 우선값을 읽어 DataSource를 구성한다.
+DataSource, EntityManagerFactory, TransactionManager는 Spring Boot 자동 설정이 구성한다.
 
-## 빌드와 Tomcat
+## 빌드와 실행
 
 ```bash
-./gradlew clean test war
+./gradlew clean test bootJar
 set -a
 source .env
 set +a
-cp build/libs/board.war "$CATALINA_HOME/webapps/board.war"
-"$CATALINA_HOME/bin/catalina.sh" run
+java -jar build/libs/board.jar
 ```
 
-현재 정적 OpenAPI 명세의 server URL은 `/board`이므로 WAR 파일명을 `board.war`로 유지한다. Swagger UI는 `http://localhost:8080/board/swagger-ui/index.html`, OpenAPI JSON은 `http://localhost:8080/board/v3/api-docs`에서 확인한다. 다른 context path로 배포하려면 `openapi.json`의 `servers` 값도 함께 변경해야 한다.
+개발 중에는 다음 명령으로 바로 실행할 수 있다.
+
+```bash
+./gradlew bootRun
+```
+
+Swagger UI는 `http://localhost:8080/swagger-ui/index.html`, OpenAPI JSON은 `http://localhost:8080/v3/api-docs`에서 확인한다.
 
 ## DataGrip
 
@@ -79,7 +83,7 @@ MySQL 컨테이너 기동 후 Test Connection을 실행하고 `boards`, `comment
 1. `.env.example`을 `.env`로 복사하고 로컬 비밀번호를 설정한다.
 2. `docker compose up -d mysql`을 실행한다.
 3. `docker compose ps`에서 MySQL이 healthy인지 확인한다.
-4. `./gradlew clean test war`를 실행한다.
-5. `board.war`를 Tomcat 10.1에 배포한다.
+4. `./gradlew clean test bootJar`를 실행한다.
+5. `java -jar build/libs/board.jar` 또는 `./gradlew bootRun`으로 실행한다.
 6. Swagger UI와 `/v3/api-docs`를 확인한다.
 7. DataGrip에서 DB 연결과 FK를 확인한다.

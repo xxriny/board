@@ -1,23 +1,23 @@
-# Spring MVC Board REST API Implementation Plan
+# Board REST API Implementation Plan
 
-> **Status (2026-09-01):** 구현과 Tomcat/MySQL smoke test를 완료했다. 아래 작업별 체크박스는 최초 계획의 범위를 보존한 기록이며, 실제 완료 여부는 하단 Definition of Done과 Git 커밋을 기준으로 판단한다.
+> **Status (2026-09-02):** v1 순수 Spring MVC/WAR 구현은 `v1.0.0` 태그로 보존하고, 현재 v2는 Spring Boot 실행형 JAR 구조로 전환했다. 아래 작업별 체크박스는 v1 최초 계획의 범위를 보존한 기록이며, 현재 구조는 README, architecture, operations 문서를 기준으로 판단한다.
 
-**Goal:** Build a WAR-deployed JSON REST API for boards and one-depth comments using non-Boot Spring MVC and direct JPA EntityManager access.
+**Goal:** Build a JSON REST API for boards and one-depth comments. v1 used non-Boot Spring MVC and direct JPA EntityManager access; v2 uses Spring Boot, Spring Data JPA, and an executable JAR.
 
 **Architecture:** Shared Spring MVC/JPA infrastructure is established first. API behavior is then implemented as complete vertical slices in CRUD order, with each slice adding its Repository, Service, Controller, DTO, and tests before the next behavior begins.
 
-**Tech Stack:** Java 17, Gradle WAR, Spring Framework 6.x, Hibernate 6.x, MySQL 8.0, HikariCP, Lombok, Jackson, Jakarta Validation, OpenAPI 3, JUnit 5, Mockito, AssertJ, MockMvc, Testcontainers, Tomcat 10.1.
+**Tech Stack:** Java 17, Spring Boot 3, Spring Web MVC, Spring Data JPA, Hibernate 6.x, MySQL 8.0, Lombok, Jackson, Jakarta Validation, OpenAPI 3, JUnit 5, Mockito, AssertJ, MockMvc, Testcontainers.
 
 **Spec:** `docs/architecture.md`, `docs/domain-model.md`, `docs/api-spec.md`, `docs/operations.md`, and `docs/board.erd`.
 
 ## Global Constraints
 
 - Java 17 with `sourceCompatibility` and `targetCompatibility` set to 17.
-- No Spring Boot, Spring Data JPA, `web.xml`, view templates, or `javax.*` APIs.
-- Use `AbstractAnnotationConfigDispatcherServletInitializer` and Java Config.
-- Use direct `EntityManager` access in concrete repository classes.
+- No `web.xml`, view templates, or `javax.*` APIs.
+- Use Spring Boot auto-configuration for MVC, JPA, validation, and embedded Tomcat.
+- Use Spring Data JPA repositories for CRUD, paging, and simple derived queries.
 - Keep `@Transactional` in services and return DTOs rather than entities.
-- Package a WAR for external Tomcat 10.1.
+- Package an executable JAR with `bootJar`.
 - Support only one-depth comments.
 - Write a failing behavior test before each production implementation.
 - After foundation work, execute Board C → R → U → D and then Comment C → R → U → D.
@@ -221,7 +221,8 @@
 - [x] All nine APIs return the documented status and `ApiResponse<T>` JSON shape; Board와 Comment 수정·삭제는 BCrypt 비밀번호 검증을 거친다.
 - [x] Missing resources return 404 and invalid requests return field-specific 400 responses.
 - [x] Board detail increments view count and Board deletion cascades to Comments.
-- [x] No Spring Data JPA, Boot bootstrap, `web.xml`, or view technology exists.
-- [x] `./gradlew clean test war` exits successfully.
+- [x] Spring Boot runs the application without `web.xml` or view technology.
+- [x] Spring Data JPA repositories handle CRUD, paging, and simple derived queries.
+- [x] `./gradlew clean test bootJar` exits successfully.
 - [x] Docker Compose and MySQL-backed tests pass when Docker is available.
-- [x] Tomcat 10.1 serves the API and Swagger UI at the `/board` context path.
+- [x] Embedded Tomcat serves the API and Swagger UI at the root context path.
