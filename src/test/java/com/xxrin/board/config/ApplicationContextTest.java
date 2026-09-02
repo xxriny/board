@@ -2,6 +2,8 @@ package com.xxrin.board.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.xxrin.board.repository.BoardRepository;
+import com.xxrin.board.repository.CommentRepository;
 import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.Test;
@@ -34,6 +36,12 @@ class ApplicationContextTest {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
+    @Autowired
+    private BoardRepository boardRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
     @Test
     void rootContextProvidesJpaInfrastructure() {
         assertThat(dataSource).isNotNull();
@@ -48,5 +56,11 @@ class ApplicationContextTest {
         assertThat(initializer.getRootConfigClasses()).containsExactly(RootConfig.class);
         assertThat(initializer.getServletConfigClasses()).containsExactly(WebConfig.class);
         assertThat(initializer.getServletMappings()).containsExactly("/");
+    }
+
+    @Test
+    void rootContextProvidesSpringDataRepositories() {
+        assertThat(boardRepository).isNotNull();
+        assertThat(commentRepository).isNotNull();
     }
 }

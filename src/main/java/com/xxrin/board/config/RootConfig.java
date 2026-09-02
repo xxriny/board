@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -21,11 +22,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-/** 데이터소스, 순수 JPA 및 서비스 트랜잭션을 구성하는 Root 컨텍스트다. */
+/** 데이터소스, Spring Data JPA 및 서비스 트랜잭션을 구성하는 Root 컨텍스트다. */
 @Configuration
 @EnableTransactionManagement
+@EnableJpaRepositories(basePackages = "com.xxrin.board.repository")
 @PropertySource("classpath:db.properties")
-@ComponentScan(basePackages = {"com.xxrin.board.repository", "com.xxrin.board.service"})
+@ComponentScan(basePackages = "com.xxrin.board.service")
 public class RootConfig {
 
     @Bean

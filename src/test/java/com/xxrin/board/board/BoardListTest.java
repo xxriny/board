@@ -2,6 +2,7 @@ package com.xxrin.board.board;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.xxrin.board.domain.Board;
@@ -10,6 +11,9 @@ import com.xxrin.board.repository.BoardRepository;
 import com.xxrin.board.service.BoardService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
 
 class BoardListTest {
@@ -19,8 +23,12 @@ class BoardListTest {
         BoardRepository repository = mock(BoardRepository.class);
         Board first = board(2L, "두 번째");
         Board second = board(1L, "첫 번째");
-        when(repository.findPage(1, 2)).thenReturn(List.of(first, second));
-        when(repository.count()).thenReturn(12L);
+        PageRequest pageable = PageRequest.of(
+                1,
+                2,
+                Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("id")));
+        when(repository.findAll(pageable))
+                .thenReturn(new PageImpl<>(List.of(first, second), pageable, 12));
         BoardService service = new BoardService(repository);
 
         PageResponse<?> response = service.findAll(1, 2);
@@ -30,6 +38,7 @@ class BoardListTest {
         assertThat(response.size()).isEqualTo(2);
         assertThat(response.totalElements()).isEqualTo(12L);
         assertThat(response.totalPages()).isEqualTo(6);
+        verify(repository).findAll(pageable);
     }
 
     private Board board(Long id, String title) {

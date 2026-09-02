@@ -24,7 +24,7 @@ class CommentDeleteTest {
         Board board = Board.builder().title("제목").writer("작성자").passwordHash("hash").build();
         Comment comment = Comment.builder().content("댓글").writer("댓글 작성자")
                 .passwordHash("encoded-password").board(board).build();
-        when(comments.findByBoardIdAndId(1L, 10L)).thenReturn(Optional.of(comment));
+        when(comments.findByBoard_IdAndId(1L, 10L)).thenReturn(Optional.of(comment));
         when(passwordEncoder.matches("1234", "encoded-password")).thenReturn(true);
         CommentService service = new CommentService(mock(BoardRepository.class), comments, passwordEncoder);
 
@@ -40,7 +40,7 @@ class CommentDeleteTest {
         Board board = Board.builder().title("제목").writer("작성자").passwordHash("hash").build();
         Comment comment = Comment.builder().content("댓글").writer("댓글 작성자")
                 .passwordHash("encoded-password").board(board).build();
-        when(comments.findByBoardIdAndId(1L, 10L)).thenReturn(Optional.of(comment));
+        when(comments.findByBoard_IdAndId(1L, 10L)).thenReturn(Optional.of(comment));
         CommentService service = new CommentService(mock(BoardRepository.class), comments, passwordEncoder);
 
         assertThatThrownBy(() -> service.delete(1L, 10L, "wrong"))

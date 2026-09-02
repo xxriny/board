@@ -16,8 +16,9 @@ repositories {
 }
 
 ext {
-    springVersion = '6.2.12'
-    hibernateVersion = '6.6.25.Final'
+    springVersion = '6.2.19'
+    springDataJpaVersion = '3.5.13'
+    hibernateVersion = '6.6.53.Final'
     jacksonVersion = '2.19.2'
     junitVersion = '5.13.4'
     testcontainersVersion = '1.21.3'
@@ -27,6 +28,7 @@ dependencies {
     implementation "org.springframework:spring-context:${springVersion}"
     implementation "org.springframework:spring-webmvc:${springVersion}"
     implementation "org.springframework:spring-orm:${springVersion}"
+    implementation "org.springframework.data:spring-data-jpa:${springDataJpaVersion}"
     implementation 'org.springframework.security:spring-security-crypto:6.4.12'
     implementation 'io.swagger.core.v3:swagger-annotations-jakarta:2.2.36'
     implementation 'org.webjars:swagger-ui:5.29.5'

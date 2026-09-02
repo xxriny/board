@@ -53,7 +53,7 @@ public class CommentService {
     public List<CommentResponse> findAll(Long boardId) {
         boardRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
-        return commentRepository.findAllByBoardId(boardId).stream()
+        return commentRepository.findAllByBoard_IdOrderByCreatedAtAscIdAsc(boardId).stream()
                 .map(CommentResponse::from)
                 .toList();
     }
@@ -74,7 +74,7 @@ public class CommentService {
     }
 
     private Comment findComment(Long boardId, Long commentId) {
-        return commentRepository.findByBoardIdAndId(boardId, commentId)
+        return commentRepository.findByBoard_IdAndId(boardId, commentId)
                 .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
     }
 
