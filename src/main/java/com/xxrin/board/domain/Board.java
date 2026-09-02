@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 
 /** 게시글의 상태와 댓글 연관관계를 관리하는 JPA 엔티티다. */
 @Entity
@@ -46,6 +46,9 @@ public class Board {
     @Column(name = "view_count", nullable = false)
     private int viewCount;
 
+    @Formula("(select count(c.id) from comments c where c.board_id = id)")
+    private long commentCount;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -68,6 +71,7 @@ public class Board {
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
+        this.updatedAt = LocalDateTime.now();
     }
 
     /** 상세 조회 시 조회수를 한 건 증가시킨다. */
@@ -94,7 +98,6 @@ public class Board {
     public List<Comment> getComments() {
         return Collections.unmodifiableList(comments);
     }
-
     @PrePersist
     private void prePersist() {
         LocalDateTime now = LocalDateTime.now();
@@ -102,8 +105,4 @@ public class Board {
         updatedAt = now;
     }
 
-    @PreUpdate
-    private void preUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }

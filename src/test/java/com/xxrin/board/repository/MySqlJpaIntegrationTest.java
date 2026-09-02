@@ -72,8 +72,12 @@ class MySqlJpaIntegrationTest {
         entityManager.getTransaction().commit();
         Long boardId = board.getId();
 
+        entityManager.clear();
+        Board savedBoard = entityManager.find(Board.class, boardId);
+        assertThat(savedBoard.getCommentCount()).isEqualTo(1);
+
         entityManager.getTransaction().begin();
-        entityManager.remove(entityManager.find(Board.class, boardId));
+        entityManager.remove(savedBoard);
         entityManager.getTransaction().commit();
 
         assertThat(entityManager.createQuery("select count(c) from Comment c", Long.class)

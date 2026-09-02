@@ -15,6 +15,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /** 애플리케이션 예외를 일관된 JSON 오류 응답으로 변환한다. */
 @RestControllerAdvice
@@ -65,6 +66,13 @@ public class GlobalExceptionHandler {
         log.warn("Bad request: {}", exception.getMessage());
         return ResponseEntity.badRequest()
                 .body(ApiResponse.error("요청 본문을 확인해 주세요."));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNoResource(NoResourceFoundException exception) {
+        log.warn("Resource not found: {}", exception.getResourcePath());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error("요청한 경로를 찾을 수 없습니다."));
     }
 
     @ExceptionHandler(Exception.class)

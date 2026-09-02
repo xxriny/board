@@ -10,7 +10,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.http.MediaType;
 
 @SpringBootTest(properties = {
         "spring.datasource.driver-class-name=org.h2.Driver",
@@ -51,5 +53,25 @@ class OpenApiIntegrationTest {
     void servesSwaggerUiEntryPoint() throws Exception {
         mvc.perform(get("/swagger-ui/index.html"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void returnsNotFoundForUnknownPath() throws Exception {
+        mvc.perform(get("/not-found"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deleteEndpointsRejectBlankPasswordBody() throws Exception {
+        String body = "{\"password\":\"\"}";
+
+        mvc.perform(delete("/api/boards/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest());
+        mvc.perform(delete("/api/boards/1/comments/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest());
     }
 }

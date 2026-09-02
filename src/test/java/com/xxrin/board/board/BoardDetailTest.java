@@ -13,6 +13,7 @@ import com.xxrin.board.repository.BoardRepository;
 import com.xxrin.board.service.BoardService;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 class BoardDetailTest {
@@ -28,7 +29,7 @@ class BoardDetailTest {
                 .build();
         ReflectionTestUtils.setField(comment, "id", 10L);
         when(repository.findById(1L)).thenReturn(Optional.of(board));
-        BoardService service = new BoardService(repository);
+        BoardService service = new BoardService(repository, mock(PasswordEncoder.class));
 
         BoardDetailResponse response = service.findDetail(1L);
 
@@ -40,7 +41,7 @@ class BoardDetailTest {
     void detailThrowsNotFoundForMissingBoard() {
         BoardRepository repository = mock(BoardRepository.class);
         when(repository.findById(99L)).thenReturn(Optional.empty());
-        BoardService service = new BoardService(repository);
+        BoardService service = new BoardService(repository, mock(PasswordEncoder.class));
 
         assertThatThrownBy(() -> service.findDetail(99L))
                 .isInstanceOf(EntityNotFoundException.class)

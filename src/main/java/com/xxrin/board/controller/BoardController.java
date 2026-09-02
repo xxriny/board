@@ -2,6 +2,7 @@ package com.xxrin.board.controller;
 
 import com.xxrin.board.dto.request.BoardCreateRequest;
 import com.xxrin.board.dto.request.BoardUpdateRequest;
+import com.xxrin.board.dto.request.PasswordRequest;
 import com.xxrin.board.dto.response.ApiResponse;
 import com.xxrin.board.dto.response.BoardDetailResponse;
 import com.xxrin.board.dto.response.BoardResponse;
@@ -84,9 +85,8 @@ public class BoardController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "게시글 없음")})
     public ResponseEntity<ApiResponse<Void>> delete(
             @PathVariable Long id,
-            @RequestParam @jakarta.validation.constraints.NotBlank(
-                    message = "비밀번호는 필수입니다.") String password) {
-        boardService.delete(id, password);
+            @Valid @RequestBody PasswordRequest request) {
+        boardService.delete(id, request.password());
         return ResponseEntity.ok(ApiResponse.success(null, "게시글이 삭제되었습니다."));
     }
 }

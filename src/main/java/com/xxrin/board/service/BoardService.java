@@ -9,31 +9,21 @@ import com.xxrin.board.dto.response.PageResponse;
 import com.xxrin.board.exception.EntityNotFoundException;
 import com.xxrin.board.exception.InvalidPasswordException;
 import com.xxrin.board.repository.BoardRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.RequiredArgsConstructor;
 
 /** 게시글 유스케이스와 트랜잭션 경계를 관리한다. */
 @Service
+@RequiredArgsConstructor
 public class BoardService {
 
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public BoardService(BoardRepository boardRepository) {
-        this(boardRepository, new BCryptPasswordEncoder());
-    }
-
-    @Autowired
-    public BoardService(BoardRepository boardRepository, PasswordEncoder passwordEncoder) {
-        this.boardRepository = boardRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Transactional
     public BoardResponse create(BoardCreateRequest request) {

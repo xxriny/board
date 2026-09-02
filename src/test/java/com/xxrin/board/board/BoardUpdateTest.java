@@ -17,12 +17,14 @@ import com.xxrin.board.exception.InvalidPasswordException;
 import com.xxrin.board.exception.GlobalExceptionHandler;
 import com.xxrin.board.repository.BoardRepository;
 import com.xxrin.board.service.BoardService;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 class BoardUpdateTest {
@@ -33,6 +35,8 @@ class BoardUpdateTest {
         Board board = Board.builder().title("기존 제목").content("기존 내용").writer("작성자")
                 .passwordHash("encoded-password")
                 .build();
+        ReflectionTestUtils.invokeMethod(board, "prePersist");
+        LocalDateTime before = board.getUpdatedAt();
         when(repository.findById(1L)).thenReturn(Optional.of(board));
         PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
         when(passwordEncoder.matches("password", "encoded-password")).thenReturn(true);
@@ -43,6 +47,7 @@ class BoardUpdateTest {
 
         assertThat(response.title()).isEqualTo("새 제목");
         assertThat(response.content()).isEqualTo("새 내용");
+        assertThat(response.updatedAt()).isAfter(before);
         verify(repository).findById(1L);
     }
 
@@ -51,7 +56,7 @@ class BoardUpdateTest {
         BoardRepository repository = mock(BoardRepository.class);
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> new BoardService(repository)
+        assertThatThrownBy(() -> new BoardService(repository, mock(PasswordEncoder.class))
                 .update(99L, new BoardUpdateRequest("제목", "내용", "1234")))
                 .isInstanceOf(EntityNotFoundException.class);
     }

@@ -10,31 +10,19 @@ import com.xxrin.board.exception.InvalidPasswordException;
 import com.xxrin.board.repository.BoardRepository;
 import com.xxrin.board.repository.CommentRepository;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.RequiredArgsConstructor;
 
 /** 댓글 유스케이스와 트랜잭션 경계를 관리한다. */
 @Service
+@RequiredArgsConstructor
 public class CommentService {
 
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public CommentService(BoardRepository boardRepository, CommentRepository commentRepository) {
-        this(boardRepository, commentRepository, new BCryptPasswordEncoder());
-    }
-
-    @Autowired
-    public CommentService(
-            BoardRepository boardRepository, CommentRepository commentRepository, PasswordEncoder passwordEncoder) {
-        this.boardRepository = boardRepository;
-        this.commentRepository = commentRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Transactional
     public CommentResponse create(Long boardId, CommentCreateRequest request) {

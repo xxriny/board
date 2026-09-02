@@ -18,6 +18,7 @@ import com.xxrin.board.repository.BoardRepository;
 import com.xxrin.board.service.BoardService;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -35,7 +36,7 @@ class BoardCreateTest {
             ReflectionTestUtils.setField(board, "id", 1L);
             return board;
         });
-        BoardService service = new BoardService(repository);
+        BoardService service = new BoardService(repository, new BCryptPasswordEncoder());
 
         BoardResponse response = service.create(
                 new BoardCreateRequest("제목", "내용", "작성자", "1234"));
@@ -51,7 +52,7 @@ class BoardCreateTest {
     void controllerReturnsCreatedEnvelope() throws Exception {
         BoardService service = mock(BoardService.class);
         when(service.create(any(BoardCreateRequest.class)))
-                .thenReturn(new BoardResponse(1L, "제목", "내용", "작성자", 0, null, null));
+                .thenReturn(new BoardResponse(1L, "제목", "내용", "작성자", 0, 0, null, null));
         MockMvc mockMvc = mockMvc(service);
 
         String body = mockMvc.perform(post("/api/boards")

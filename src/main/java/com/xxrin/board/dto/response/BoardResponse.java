@@ -10,6 +10,7 @@ public record BoardResponse(
         String content,
         String writer,
         int viewCount,
+        long commentCount,
         LocalDateTime createdAt,
         LocalDateTime updatedAt) {
 
@@ -20,6 +21,7 @@ public record BoardResponse(
                 board.getContent(),
                 board.getWriter(),
                 board.getViewCount(),
+                board.getCommentCount(),
                 board.getCreatedAt(),
                 board.getUpdatedAt());
     }

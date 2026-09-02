@@ -11,6 +11,7 @@ public record BoardDetailResponse(
         String content,
         String writer,
         int viewCount,
+        long commentCount,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         List<CommentResponse> comments) {
@@ -25,6 +26,7 @@ public record BoardDetailResponse(
                 board.getContent(),
                 board.getWriter(),
                 board.getViewCount(),
+                board.getCommentCount(),
                 board.getCreatedAt(),
                 board.getUpdatedAt(),
                 comments);

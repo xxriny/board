@@ -12,6 +12,7 @@ import com.xxrin.board.service.CommentService;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 class CommentReadTest {
@@ -26,7 +27,7 @@ class CommentReadTest {
         when(boards.findById(1L)).thenReturn(Optional.of(board));
         when(comments.findAllByBoard_IdOrderByCreatedAtAscIdAsc(1L)).thenReturn(List.of(comment));
 
-        assertThat(new CommentService(boards, comments).findAll(1L))
+        assertThat(new CommentService(boards, comments, mock(PasswordEncoder.class)).findAll(1L))
                 .extracting("id").containsExactly(10L);
     }
 }
