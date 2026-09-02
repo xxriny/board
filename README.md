@@ -21,23 +21,37 @@ docker compose ps
 
 `.env`의 비밀번호는 로컬 값으로 변경한다. `board-mysql` 상태가 `healthy`가 되면 애플리케이션에서 접속할 수 있다.
 
-## 2. 테스트 및 WAR 빌드
+## 2. 테스트 및 WAR 재빌드
 
 ```bash
 ./gradlew clean test war
+```
+
+테스트를 생략하고 WAR만 빠르게 다시 만들 때는 다음 명령을 사용한다.
+
+```bash
+./gradlew clean war
 ```
 
 결과물은 `build/libs/board.war`이다. Spring Boot 내장 서버는 제공하지 않는다.
 
 ## 3. Tomcat 10.1 배포
 
-JDK 17로 실행되는 Tomcat 10.1을 준비하고 다음과 같이 배포한다.
+JDK 17로 실행되는 Tomcat 10.1을 준비하고 다음과 같이 배포한다. 이미 배포된 WAR를 교체할 때는 Tomcat을 멈춘 뒤 기존 배포 산출물을 지우고 새 WAR를 복사한다.
 
 ```bash
 set -a
 source .env
 set +a
+
+"$CATALINA_HOME/bin/catalina.sh" stop
+rm -rf "$CATALINA_HOME/webapps/board" "$CATALINA_HOME/webapps/board.war"
 cp build/libs/board.war "$CATALINA_HOME/webapps/board.war"
+```
+
+Tomcat을 실행한다.
+
+```bash
 "$CATALINA_HOME/bin/catalina.sh" run
 ```
 
