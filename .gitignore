@@ -9,6 +9,7 @@ out/
 ### Gradle ###
 .gradle/
 build/
+logs/
 .worktrees/
 
 ### Local environment ###
