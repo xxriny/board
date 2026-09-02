@@ -7,8 +7,8 @@
 | [`architecture.md`](architecture.md) | 런타임, 계층, Spring Boot 자동 설정 및 주요 기술 결정 |
 | [`domain-model.md`](domain-model.md) | Board/Comment 모델, 관계, 영속성 규칙 |
 | [`api-spec.md`](api-spec.md) | 엔드포인트, 요청 검증, 응답과 오류 계약 |
-| [`operations.md`](operations.md) | MySQL, 환경변수, Boot 실행, Swagger 및 DataGrip 실행 규칙 |
-| [`plan.md`](plan.md) | TDD 기반 구현 순서와 실제 완료 결과 |
+| [`operations.md`](operations.md) | MySQL, 환경변수, Boot 실행, Swagger, DataGrip 및 배포 보안 경계 |
+| [`plan.md`](plan.md) | v2 마이그레이션 완료 상태와 후속 작업 |
 | [`board.erd`](board.erd) | ERD Editor 3.0 형식의 논리·물리 ERD |
 
-구현 시 루트의 [`AGENTS.md`](../AGENTS.md)를 먼저 적용하고, 문서 간 충돌이 있으면 API 계약, 도메인 규칙, 아키텍처, 운영 절차, 구현 계획 순으로 판단한다.
+구현 시 루트의 [`AGENTS.md`](../AGENTS.md)를 먼저 적용하고, 문서 간 충돌이 있으면 API 계약, 도메인 규칙, 아키텍처, 운영 절차, 구현 계획 순으로 판단한다. v1의 최초 구현 계획과 WAR 운영 방법은 `v1.0.0` 태그에서 확인한다.

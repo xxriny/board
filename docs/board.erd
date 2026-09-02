@@ -4,8 +4,8 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -116,
-    "scrollLeft": 0,
+    "scrollTop": -207,
+    "scrollLeft": -223.6562,
     "zoomLevel": 1,
     "show": 431,
     "database": 4,
@@ -206,8 +206,8 @@
         "options": 8,
         "ui": {
           "keys": 0,
-          "widthName": 92,
-          "widthComment": 100,
+          "widthName": 90,
+          "widthComment": 102,
           "widthDataType": 60,
           "widthDefault": 60
         },
@@ -346,8 +346,8 @@
         "options": 8,
         "ui": {
           "keys": 0,
-          "widthName": 92,
-          "widthComment": 100,
+          "widthName": 90,
+          "widthComment": 92,
           "widthDataType": 60,
           "widthDefault": 60
         },
@@ -408,7 +408,7 @@
           "keys": 0,
           "widthName": 67,
           "widthComment": 71,
-          "widthDataType": 61,
+          "widthDataType": 85,
           "widthDefault": 60
         },
         "meta": {
@@ -428,8 +428,8 @@
           "columnIds": [
             "boardId"
           ],
-          "x": 476,
-          "y": 376,
+          "x": 520,
+          "y": 388,
           "direction": 2
         },
         "end": {
@@ -438,7 +438,7 @@
             "commentBoardId"
           ],
           "x": 590,
-          "y": 381,
+          "y": 393,
           "direction": 1
         },
         "meta": {

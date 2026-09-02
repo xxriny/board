@@ -22,10 +22,11 @@ boards 1 ───────── 0..N comments
 | 게시글 작성자 | `writer` | `writer` | `String` | not null, 최대 100자 |
 | 게시글 비밀번호 해시 | `passwordHash` | `password_hash` | `String` | not null, BCrypt 60자 |
 | 조회수 | `viewCount` | `view_count` | `int` | not null, 기본값 0 |
+| 댓글 수 | `commentCount` | 계산 필드 | `long` | `@Formula`, 읽기 전용 |
 | 생성 시각 | `createdAt` | `created_at` | `LocalDateTime` | not null |
 | 수정 시각 | `updatedAt` | `updated_at` | `LocalDateTime` | not null |
 
-JPA 테이블명은 `boards`다. `comments`는 `@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)`로 매핑하며 컬렉션은 빈 `ArrayList`로 초기화한다.
+JPA 테이블명은 `boards`다. `comments`는 `@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)`로 매핑하며 컬렉션은 빈 `ArrayList`로 초기화한다. `commentCount`는 별도 컬럼을 만들지 않고 Hibernate `@Formula`의 상관 서브쿼리로 조회한다.
 
 게시글 비밀번호 원문은 저장하지 않는다. Service에서 BCrypt로 해시해 `password_hash`에 저장하고 수정·삭제 요청 시 입력값과 비교한다. 외부 응답 DTO에는 해시를 포함하지 않는다.
 
@@ -36,7 +37,7 @@ JPA 테이블명은 `boards`다. `comments`는 `@OneToMany(mappedBy = "board", c
 - `addComment(Comment comment)`
 - `removeComment(Comment comment)`
 
-`@PrePersist`에서 생성/수정 시각과 조회수 기본값을 보장하고 `@PreUpdate`에서 수정 시각을 갱신한다.
+`@PrePersist`에서 생성/수정 시각과 조회수 기본값을 보장한다. `update(String title, String content)`는 수정 시각을 즉시 갱신해 API 응답과 저장값의 의미를 일치시키며, 조회수 증가는 수정 시각에 영향을 주지 않는다.
 
 ## Comment
 
@@ -50,7 +51,7 @@ JPA 테이블명은 `boards`다. `comments`는 `@OneToMany(mappedBy = "board", c
 | 생성 시각 | `createdAt` | `created_at` | `LocalDateTime` | not null |
 | 수정 시각 | `updatedAt` | `updated_at` | `LocalDateTime` | not null |
 
-JPA 테이블명은 `comments`다. `board`는 `@ManyToOne(fetch = FetchType.LAZY, optional = false)`와 `@JoinColumn(name = "board_id", nullable = false)`로 매핑한다. 부모 댓글 필드는 만들지 않는다. 댓글 비밀번호 원문은 저장하지 않고 Service에서 BCrypt로 해시해 `password_hash`에 저장한다. 수정·삭제 시 입력 비밀번호와 비교하며 외부 응답에는 해시를 포함하지 않는다. 댓글 수정은 `update(String content)`로 내용과 `updatedAt`을 즉시 변경해 수정 응답에도 새 시각을 포함하며, `@PreUpdate`에서도 수정 시각 갱신을 보장한다. 작성자와 소속 게시글은 유지한다.
+JPA 테이블명은 `comments`다. `board`는 `@ManyToOne(fetch = FetchType.LAZY, optional = false)`와 `@JoinColumn(name = "board_id", nullable = false)`로 매핑한다. 부모 댓글 필드는 만들지 않는다. 댓글 비밀번호 원문은 저장하지 않고 Service에서 BCrypt로 해시해 `password_hash`에 저장한다. 수정·삭제 시 입력 비밀번호와 비교하며 외부 응답에는 해시를 포함하지 않는다. 댓글 수정은 `update(String content)`로 내용과 `updatedAt`을 즉시 변경해 수정 응답에도 새 시각을 포함한다. 작성자와 소속 게시글은 유지한다.
 
 ## 엔티티 구현 규칙
 

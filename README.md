@@ -20,7 +20,7 @@ docker compose up -d mysql
 docker compose ps
 ```
 
-`.env`의 비밀번호는 로컬 값으로 변경한다. `board-mysql` 상태가 `healthy`가 되면 애플리케이션에서 접속할 수 있다.
+`.env`의 비밀번호는 로컬 값으로 변경한다. `board-mysql` 상태가 `healthy`가 되면 애플리케이션에서 접속할 수 있다. Compose의 기본 비밀번호와 포트 공개 방식은 로컬 개발 전용이므로 운영 환경에서 사용하지 않는다.
 
 ## 2. 테스트 및 실행 파일 빌드
 
@@ -41,22 +41,16 @@ docker compose ps
 개발 중에는 Gradle로 바로 실행한다.
 
 ```bash
-set -a
-source .env
-set +a
-
 ./gradlew bootRun
 ```
 
 빌드된 JAR로 실행할 때는 다음 명령을 사용한다.
 
 ```bash
-set -a
-source .env
-set +a
-
 java -jar build/libs/board.jar
 ```
+
+두 명령은 프로젝트 루트의 `.env`를 `application.yml`에서 불러오므로 프로젝트 루트에서 실행한다.
 
 - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 - OpenAPI JSON: `http://localhost:8080/v3/api-docs`
@@ -86,11 +80,17 @@ curl -X PUT http://localhost:8080/api/boards/1/comments/1 \
   -H 'Content-Type: application/json' \
   -d '{"content":"수정 댓글","password":"1234"}'
 
-curl -X DELETE 'http://localhost:8080/api/boards/1/comments/1?password=1234'
-curl -X DELETE 'http://localhost:8080/api/boards/1?password=1234'
+curl -X DELETE http://localhost:8080/api/boards/1/comments/1 \
+  -H 'Content-Type: application/json' \
+  -d '{"password":"1234"}'
+
+curl -X DELETE http://localhost:8080/api/boards/1 \
+  -H 'Content-Type: application/json' \
+  -d '{"password":"1234"}'
 ```
 
-게시글과 댓글 비밀번호는 BCrypt 해시로 저장하며 응답에 노출하지 않는다. 각 리소스의 수정·삭제 시 작성 당시 비밀번호가 필요하다.
+게시글과 댓글 비밀번호는 BCrypt 해시로 저장하며 응답에 노출하지 않는다. 각 리소스의 수정·삭제 시 작성 당시 비밀번호가 필요하다. 이 방식은 계정 인증이나 요청 횟수 제한을 제공하지 않으므로, 예시는 로컬 개발용으로만 사용한다.
+게시글 목록과 상세 응답에는 각 게시글의 `commentCount`가 포함된다.
 
 ## DataGrip 연결
 
@@ -106,4 +106,4 @@ DataGrip의 MySQL 데이터 소스를 추가한 뒤 Test Connection을 실행한
 
 ## 구성값
 
-`src/main/resources/application.properties`는 `DB_HOST`, `DB_PORT`, `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD` 환경변수를 읽는다. Hibernate는 `ddl-auto=update`와 SQL 출력을 사용한다. 운영 환경에서는 저장소 기본 비밀번호를 사용하지 않는다.
+`src/main/resources/application.yml`은 프로젝트 루트의 Git 제외 파일 `.env`를 선택적으로 불러오고 `DB_HOST`, `DB_PORT`, `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD` 값을 읽는다. Hibernate는 로컬 개발용으로 `ddl-auto=update`, OSIV 비활성화와 SQL 출력을 사용한다. 운영 환경에서는 파일 대신 배포 환경의 secret 관리 수단을 사용하고, 별도 프로필에서 스키마 검증·마이그레이션과 로그 수준을 설정한다. 외부 배포 보안 요구 사항은 [`docs/operations.md`](docs/operations.md)를 따른다.
