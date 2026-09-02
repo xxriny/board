@@ -1,8 +1,8 @@
 # Spring MVC Board REST API Implementation Plan
 
-> **Status (2026-09-01):** 구현과 Tomcat/MySQL smoke test를 완료했다. 아래 작업별 체크박스는 최초 계획의 범위를 보존한 기록이며, 실제 완료 여부는 하단 Definition of Done과 Git 커밋을 기준으로 판단한다.
+> **Status (2026-09-02):** 최초 순수 JPA 구현을 완료한 뒤 요구사항 변경에 따라 Spring Data JPA Repository로 전환했다. 아래 작업별 체크박스는 최초 구현 계획의 기록이며, 현재 구조는 전환 설계서와 Git 커밋을 기준으로 판단한다.
 
-**Goal:** Build a WAR-deployed JSON REST API for boards and one-depth comments using non-Boot Spring MVC and direct JPA EntityManager access.
+**Goal:** Build a WAR-deployed JSON REST API for boards and one-depth comments using non-Boot Spring MVC and Spring Data JPA.
 
 **Architecture:** Shared Spring MVC/JPA infrastructure is established first. API behavior is then implemented as complete vertical slices in CRUD order, with each slice adding its Repository, Service, Controller, DTO, and tests before the next behavior begins.
 
@@ -13,9 +13,9 @@
 ## Global Constraints
 
 - Java 17 with `sourceCompatibility` and `targetCompatibility` set to 17.
-- No Spring Boot, Spring Data JPA, `web.xml`, view templates, or `javax.*` APIs.
+- No Spring Boot, `web.xml`, view templates, or `javax.*` APIs.
 - Use `AbstractAnnotationConfigDispatcherServletInitializer` and Java Config.
-- Use direct `EntityManager` access in concrete repository classes.
+- Use Spring Data JPA repositories configured through Java Config.
 - Keep `@Transactional` in services and return DTOs rather than entities.
 - Package a WAR for external Tomcat 10.1.
 - Support only one-depth comments.
@@ -221,7 +221,7 @@
 - [x] All nine APIs return the documented status and `ApiResponse<T>` JSON shape; Board와 Comment 수정·삭제는 BCrypt 비밀번호 검증을 거친다.
 - [x] Missing resources return 404 and invalid requests return field-specific 400 responses.
 - [x] Board detail increments view count and Board deletion cascades to Comments.
-- [x] No Spring Data JPA, Boot bootstrap, `web.xml`, or view technology exists.
+- [x] Spring Data JPA runs through Java Config without Boot bootstrap, `web.xml`, or view technology.
 - [x] `./gradlew clean test war` exits successfully.
 - [x] Docker Compose and MySQL-backed tests pass when Docker is available.
 - [x] Tomcat 10.1 serves the API and Swagger UI at the `/board` context path.

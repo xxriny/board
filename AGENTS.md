@@ -23,7 +23,8 @@ Before changing production code, read these files in order:
 - Register Spring MVC through `AbstractAnnotationConfigDispatcherServletInitializer`; never add `web.xml`.
 - Package the application as a WAR for Tomcat 10.1.
 - Use Jakarta APIs only; do not introduce `javax.*` imports.
-- Use plain JPA with an injected `EntityManager`; do not add Spring Data JPA.
+- Use Spring Data JPA repositories configured through Java Config without Spring Boot.
+- Prefer inherited CRUD, `Pageable`, and derived queries; add custom `EntityManager` code only when a query cannot be expressed clearly.
 - Keep transaction boundaries in the service layer.
 - Return DTOs wrapped in `ApiResponse<T>`; never serialize JPA entities directly.
 - Keep entities free of public setters. Mutate state through domain methods.

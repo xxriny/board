@@ -1,12 +1,12 @@
 # Spring MVC Board REST API
 
-Spring Boot와 Spring Data JPA 없이 Java 17, Spring MVC 6, Hibernate 6으로 구현한 게시판 REST API다. 게시글과 1-depth 댓글을 JSON으로 제공하며 외부 Tomcat 10.1에 WAR로 배포한다.
+Spring Boot 없이 Java 17, Spring MVC 6, Spring Data JPA, Hibernate 6으로 구현한 게시판 REST API다. 게시글과 1-depth 댓글을 JSON으로 제공하며 외부 Tomcat 10.1에 WAR로 배포한다.
 
 ## 기술 구성
 
 - Java 17, Gradle WAR
 - Spring MVC 6 Java Config (`web.xml` 없음)
-- 순수 JPA `EntityManager`, Hibernate 6, HikariCP
+- Spring Data JPA, Hibernate 6, HikariCP
 - MySQL 8.0 Docker Compose
 - Jackson, Jakarta Validation, Lombok
 - Swagger Core OpenAPI 3, Swagger UI WebJar
