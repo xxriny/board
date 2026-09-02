@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,13 +31,10 @@ import org.springframework.validation.annotation.Validated;
 @RequestMapping("/api/boards")
 @Validated
 @Tag(name = "Board", description = "게시글 API")
+@RequiredArgsConstructor
 public class BoardController {
 
     private final BoardService boardService;
-
-    public BoardController(BoardService boardService) {
-        this.boardService = boardService;
-    }
 
     @PostMapping
     @Operation(summary = "게시글 생성", responses = {
