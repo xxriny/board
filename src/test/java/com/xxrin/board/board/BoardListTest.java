@@ -10,6 +10,8 @@ import com.xxrin.board.repository.BoardRepository;
 import com.xxrin.board.service.BoardService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 class BoardListTest {
@@ -19,8 +21,8 @@ class BoardListTest {
         BoardRepository repository = mock(BoardRepository.class);
         Board first = board(2L, "두 번째");
         Board second = board(1L, "첫 번째");
-        when(repository.findPage(1, 2)).thenReturn(List.of(first, second));
-        when(repository.count()).thenReturn(12L);
+        when(repository.findAll(org.mockito.ArgumentMatchers.any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(List.of(first, second), PageRequest.of(1, 2), 12));
         BoardService service = new BoardService(repository);
 
         PageResponse<?> response = service.findAll(1, 2);

@@ -9,8 +9,10 @@ import com.xxrin.board.dto.response.PageResponse;
 import com.xxrin.board.exception.EntityNotFoundException;
 import com.xxrin.board.exception.InvalidPasswordException;
 import com.xxrin.board.repository.BoardRepository;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,10 +48,11 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public PageResponse<BoardResponse> findAll(int page, int size) {
-        List<BoardResponse> content = boardRepository.findPage(page, size).stream()
+        Page<Board> boards = boardRepository.findAll(PageRequest.of(
+                page, size, Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("id"))));
+        return PageResponse.of(boards.getContent().stream()
                 .map(BoardResponse::from)
-                .toList();
-        return PageResponse.of(content, page, size, boardRepository.count());
+                .toList(), page, size, boards.getTotalElements());
     }
 
     @Transactional

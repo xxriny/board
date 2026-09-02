@@ -30,7 +30,7 @@ class CommentUpdateTest {
                 .passwordHash("encoded-password").board(board).build();
         ReflectionTestUtils.invokeMethod(comment, "prePersist");
         LocalDateTime before = comment.getUpdatedAt();
-        when(comments.findByBoardIdAndId(1L, 10L)).thenReturn(Optional.of(comment));
+        when(comments.findByBoard_IdAndId(1L, 10L)).thenReturn(Optional.of(comment));
         when(passwordEncoder.matches("1234", "encoded-password")).thenReturn(true);
 
         var response = new CommentService(mock(BoardRepository.class), comments, passwordEncoder)
@@ -43,7 +43,7 @@ class CommentUpdateTest {
     @Test
     void rejectsCommentOwnedByAnotherBoard() {
         CommentRepository comments = mock(CommentRepository.class);
-        when(comments.findByBoardIdAndId(1L, 10L)).thenReturn(Optional.empty());
+        when(comments.findByBoard_IdAndId(1L, 10L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> new CommentService(mock(BoardRepository.class), comments, mock(PasswordEncoder.class))
                 .update(1L, 10L, new CommentUpdateRequest("수정 댓글", "1234")))
@@ -57,7 +57,7 @@ class CommentUpdateTest {
         Board board = Board.builder().title("제목").writer("작성자").passwordHash("hash").build();
         Comment comment = Comment.builder().content("댓글").writer("댓글 작성자")
                 .passwordHash("encoded-password").board(board).build();
-        when(comments.findByBoardIdAndId(1L, 10L)).thenReturn(Optional.of(comment));
+        when(comments.findByBoard_IdAndId(1L, 10L)).thenReturn(Optional.of(comment));
 
         assertThatThrownBy(() -> new CommentService(mock(BoardRepository.class), comments, passwordEncoder)
                 .update(1L, 10L, new CommentUpdateRequest("수정 댓글", "wrong")))

@@ -24,7 +24,7 @@ class CommentReadTest {
         Comment comment = Comment.builder().content("댓글").writer("댓글 작성자").board(board).build();
         ReflectionTestUtils.setField(comment, "id", 10L);
         when(boards.findById(1L)).thenReturn(Optional.of(board));
-        when(comments.findAllByBoardId(1L)).thenReturn(List.of(comment));
+        when(comments.findAllByBoard_IdOrderByCreatedAtAscIdAsc(1L)).thenReturn(List.of(comment));
 
         assertThat(new CommentService(boards, comments).findAll(1L))
                 .extracting("id").containsExactly(10L);
