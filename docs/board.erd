@@ -4,8 +4,8 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -207,
-    "scrollLeft": -223.6562,
+    "scrollTop": -239,
+    "scrollLeft": -5,
     "zoomLevel": 1,
     "show": 431,
     "database": 4,
@@ -248,7 +248,7 @@
         "options": 8,
         "ui": {
           "keys": 0,
-          "widthName": 87,
+          "widthName": 94,
           "widthComment": 60,
           "widthDataType": 60,
           "widthDefault": 60
@@ -450,8 +450,8 @@
           "columnIds": [
             "boardId"
           ],
-          "x": 520,
-          "y": 388,
+          "x": 524,
+          "y": 400,
           "direction": 2
         },
         "end": {

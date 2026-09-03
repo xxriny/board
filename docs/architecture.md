@@ -39,6 +39,12 @@ board.jar
 
 로컬 기본 설정은 개발 편의를 위한 값이다. `ddl-auto=update`, SQL/DEBUG 로그, 파일 기반 `.env`는 운영 프로필에서 사용하지 않는다. 운영 환경은 별도 프로필로 스키마 검증과 마이그레이션 도구를 사용하고, 비밀값은 배포 환경의 secret 관리 수단으로 주입한다.
 
+## Spring 관리 방식
+
+- `BoardApplication`의 `@Bean` 메서드는 `PasswordEncoder`를 Spring 컨테이너에 등록한다.
+- `@RestController`, `@Service`, Spring Data JPA Repository도 컨테이너가 Bean으로 생성·관리한다. Controller와 Service는 `@RequiredArgsConstructor`가 만든 생성자로 필요한 Bean을 주입받는다.
+- `@Transactional`이 선언된 Service 메서드는 Spring 프록시가 호출 전후를 감싼다. 프록시는 실행 전에 트랜잭션을 시작하고, 정상 종료하면 commit하며, 예외가 발생하면 rollback한다.
+
 ## 계층 책임
 
 - Controller: URI 매핑, 입력 검증, HTTP 상태와 `ApiResponse<T>` 생성
