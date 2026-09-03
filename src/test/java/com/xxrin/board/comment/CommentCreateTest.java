@@ -3,6 +3,7 @@ package com.xxrin.board.comment;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.xxrin.board.domain.Board;
@@ -33,5 +34,6 @@ class CommentCreateTest {
         assertThat(response.content()).isEqualTo("댓글");
         assertThat(board.getComments()).hasSize(1);
         assertThat(board.getComments().get(0).getPasswordHash()).isEqualTo("encoded-password");
+        verify(boards).incrementCommentCount(1L);
     }
 }

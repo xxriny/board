@@ -53,6 +53,7 @@
           "boardWriter",
           "boardPasswordHash",
           "boardViewCount",
+          "boardCommentCount",
           "boardCreatedAt",
           "boardUpdatedAt"
         ],
@@ -63,6 +64,7 @@
           "boardWriter",
           "boardPasswordHash",
           "boardViewCount",
+          "boardCommentCount",
           "boardCreatedAt",
           "boardUpdatedAt"
         ],
@@ -227,6 +229,26 @@
         "ui": {
           "keys": 0,
           "widthName": 65,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "boardCommentCount": {
+        "id": "boardCommentCount",
+        "tableId": "board",
+        "name": "comment_count",
+        "comment": "댓글 수",
+        "dataType": "int",
+        "default": "0",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 87,
           "widthComment": 60,
           "widthDataType": 60,
           "widthDefault": 60

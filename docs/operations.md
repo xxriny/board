@@ -73,6 +73,17 @@ DataSource, EntityManagerFactory, TransactionManager는 Spring Boot 자동 설�
 
 위 설정은 현재 로컬 개발 기본값이다. 운영 프로필에서는 `spring.jpa.hibernate.ddl-auto=validate`와 마이그레이션 도구를 사용하고, `show-sql`, Hibernate SQL DEBUG, 애플리케이션 DEBUG 로그를 비활성화한다. 로그 저장 위치의 접근 권한과 보존 기간도 배포 환경에서 관리한다.
 
+기존 데이터베이스에 `comment_count` 컬럼을 처음 추가한 경우 Hibernate의 스키마 갱신 후 아래 쿼리를 한 번 실행해 기존 댓글 수를 보정한다. 신규 댓글 생성·삭제부터는 애플리케이션이 같은 트랜잭션에서 원자적으로 증감한다.
+
+```sql
+UPDATE boards b
+SET comment_count = (
+    SELECT COUNT(*)
+    FROM comments c
+    WHERE c.board_id = b.id
+);
+```
+
 ## 빌드와 실행
 
 ```bash

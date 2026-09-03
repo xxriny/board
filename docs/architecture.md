@@ -58,6 +58,7 @@ Controller가 Repository를 직접 호출하거나 Repository가 DTO/HTTP 타입
 - 게시글 상세는 조회수를 증가시키므로 일반 `@Transactional`을 사용한다.
 - 생성, 수정, 삭제는 일반 `@Transactional`을 사용한다.
 - 엔티티 수정은 영속 상태에서 비즈니스 메서드를 호출하고 Hibernate 변경 감지로 반영한다.
+- 댓글 생성·삭제는 같은 트랜잭션에서 `boards.comment_count`를 원자적 UPDATE로 증감한다. 별도 비동기 이벤트로 분리하지 않아 댓글 데이터와 집계 값의 커밋 원자성을 유지한다.
 
 ## OpenAPI 결정
 

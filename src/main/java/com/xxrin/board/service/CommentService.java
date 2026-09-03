@@ -34,7 +34,9 @@ public class CommentService {
                 .passwordHash(passwordEncoder.encode(request.password()))
                 .board(board)
                 .build();
-        return CommentResponse.from(commentRepository.save(comment));
+        Comment savedComment = commentRepository.save(comment);
+        boardRepository.incrementCommentCount(boardId);
+        return CommentResponse.from(savedComment);
     }
 
     @Transactional(readOnly = true)
@@ -59,6 +61,7 @@ public class CommentService {
         Comment comment = findComment(boardId, commentId);
         verifyPassword(password, comment.getPasswordHash());
         commentRepository.delete(comment);
+        boardRepository.decrementCommentCount(boardId);
     }
 
     private Comment findComment(Long boardId, Long commentId) {

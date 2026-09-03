@@ -96,7 +96,7 @@ Content-Type은 `application/json`이다.
 - `size` 기본값 10, 최소 1, 최대 100
 - 정렬: `createdAt DESC`, 동률이면 `id DESC`
 - `PageResponse`: `content`, `page`, `size`, `totalElements`, `totalPages`
-- `BoardResponse`의 `commentCount`에 각 게시글의 댓글 수를 포함한다.
+- `BoardResponse`의 `commentCount`에 `boards.comment_count`로 관리되는 각 게시글의 댓글 수를 포함한다. 값은 댓글 생성·삭제 트랜잭션에서 원자적 UPDATE로 증감한다.
 
 ### 게시글 상세
 

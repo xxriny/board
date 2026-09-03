@@ -19,6 +19,7 @@ class CommentDeleteTest {
 
     @Test
     void deletesCommentSelectedByBoardAndCommentIds() {
+        BoardRepository boards = mock(BoardRepository.class);
         CommentRepository comments = mock(CommentRepository.class);
         PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
         Board board = Board.builder().title("제목").writer("작성자").passwordHash("hash").build();
@@ -26,11 +27,12 @@ class CommentDeleteTest {
                 .passwordHash("encoded-password").board(board).build();
         when(comments.findByBoard_IdAndId(1L, 10L)).thenReturn(Optional.of(comment));
         when(passwordEncoder.matches("1234", "encoded-password")).thenReturn(true);
-        CommentService service = new CommentService(mock(BoardRepository.class), comments, passwordEncoder);
+        CommentService service = new CommentService(boards, comments, passwordEncoder);
 
         service.delete(1L, 10L, "1234");
 
         verify(comments).delete(comment);
+        verify(boards).decrementCommentCount(1L);
     }
 
     @Test

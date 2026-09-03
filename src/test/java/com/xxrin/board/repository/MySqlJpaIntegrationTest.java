@@ -74,7 +74,6 @@ class MySqlJpaIntegrationTest {
 
         entityManager.clear();
         Board savedBoard = entityManager.find(Board.class, boardId);
-        assertThat(savedBoard.getCommentCount()).isEqualTo(1);
 
         entityManager.getTransaction().begin();
         entityManager.remove(savedBoard);

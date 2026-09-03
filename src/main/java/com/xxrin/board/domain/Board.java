@@ -46,8 +46,11 @@ public class Board {
     @Column(name = "view_count", nullable = false)
     private int viewCount;
 
-    @Formula("(select count(c.id) from comments c where c.board_id = id)")
-    private long commentCount;
+//    @Formula("(select count(c.id) from comments c where c.board_id = id)")
+//    private long commentCount;
+
+    @Column(name = "comment_count", nullable = false, columnDefinition = "int default 0")
+    private int commentCount;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
