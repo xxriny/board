@@ -20,6 +20,8 @@ MYSQL_PASSWORD=board_password
 MYSQL_ROOT_PASSWORD=root_password
 DB_HOST=localhost
 DB_PORT=3306
+AUTH_JWT_SECRET=32바이트_이상_값을_Base64로_인코딩
+AUTH_COOKIE_SECURE=false
 ```
 
 ## MySQL
@@ -71,6 +73,8 @@ logging:
 
 DataSource, EntityManagerFactory, TransactionManager는 Spring Boot 자동 설정이 구성한다.
 
+`AUTH_JWT_SECRET`은 최소 256비트 원본을 Base64로 인코딩한 값이며 실제 값은 추적 파일에 저장하지 않는다. 운영에서는 `AUTH_COOKIE_SECURE=true`를 사용하고 HTTPS로만 Refresh 쿠키를 전송한다.
+
 위 설정은 현재 로컬 개발 기본값이다. 운영 프로필에서는 `spring.jpa.hibernate.ddl-auto=validate`와 마이그레이션 도구를 사용하고, `show-sql`, Hibernate SQL DEBUG, 애플리케이션 DEBUG 로그를 비활성화한다. 로그 저장 위치의 접근 권한과 보존 기간도 배포 환경에서 관리한다.
 
 기존 데이터베이스에 `comment_count` 컬럼을 처음 추가한 경우 Hibernate의 스키마 갱신 후 아래 쿼리를 한 번 실행해 기존 댓글 수를 보정한다. 신규 댓글 생성·삭제부터는 애플리케이션이 같은 트랜잭션에서 원자적으로 증감한다.
@@ -103,7 +107,7 @@ Swagger UI는 `http://localhost:8080/swagger-ui/index.html`, OpenAPI JSON은 `ht
 
 ## 외부 배포 보안
 
-현재 애플리케이션은 리소스 비밀번호 외에 계정 인증·인가와 요청 횟수 제한을 제공하지 않는다. 인터넷에 직접 공개하지 말고, 최소한 다음 경계를 구성한다.
+현재 애플리케이션은 JWT 회원 인증을 제공하지만 요청 횟수 제한은 제공하지 않는다. 인터넷에 직접 공개할 때는 최소한 다음 경계를 구성한다.
 
 1. TLS를 종료하는 리버스 프록시 뒤에 배치하고 HTTP를 HTTPS로 전환한다.
 2. 애플리케이션 포트, MySQL 포트, Swagger UI와 `/v3/api-docs`의 접근 대상을 네트워크 정책으로 제한한다.

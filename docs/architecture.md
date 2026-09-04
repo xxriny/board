@@ -10,6 +10,7 @@ Java 17, Spring Boot 3, Spring Web MVC, Spring Data JPA, Hibernate 6, MySQL 8로
 - Spring Boot 3와 내장 Tomcat
 - Spring Web MVC
 - Spring Data JPA와 Hibernate 6
+- Spring Security OAuth2 Resource Server와 JOSE
 - Gradle `bootJar`
 - Lombok, Jackson, Jakarta Validation
 - springdoc OpenAPI 3와 `/swagger-ui/index.html` UI
@@ -25,6 +26,7 @@ board.jar
     ├── Embedded Tomcat
     ├── DispatcherServlet
     ├── Controller / GlobalExceptionHandler
+    ├── SecurityFilterChain / JWT Decoder
     ├── Service / Transaction
     ├── Spring Data JPA Repository
     ├── DataSource / EntityManagerFactory / Hibernate
@@ -35,13 +37,13 @@ board.jar
 
 `BoardApplication`이 `@SpringBootApplication`으로 컴포넌트 스캔과 자동 설정을 시작한다. Boot가 MVC, Jackson, Validation, DataSource, JPA, TransactionManager, 내장 Tomcat을 자동 구성한다.
 
-`application.yml`은 프로젝트 루트의 `.env`를 선택적으로 불러오고 DB 접속 정보, JPA DDL 옵션, OSIV 비활성화, SQL 로그와 로그 레벨을 관리한다. 비밀번호 인코더는 `BCryptPasswordEncoder` 기반 `PasswordEncoder` Bean으로 등록한다.
+`application.yml`은 프로젝트 루트의 `.env`를 선택적으로 불러오고 DB 접속 정보, JPA DDL 옵션, JWT 비밀키, Refresh 쿠키 보안 속성, OSIV 비활성화와 로그 레벨을 관리한다. 비밀번호 인코더는 `SecurityConfig`에서 `BCryptPasswordEncoder` 기반 `PasswordEncoder` Bean으로 등록한다.
 
 로컬 기본 설정은 개발 편의를 위한 값이다. `ddl-auto=update`, SQL/DEBUG 로그, 파일 기반 `.env`는 운영 프로필에서 사용하지 않는다. 운영 환경은 별도 프로필로 스키마 검증과 마이그레이션 도구를 사용하고, 비밀값은 배포 환경의 secret 관리 수단으로 주입한다.
 
 ## Spring 관리 방식
 
-- `BoardApplication`의 `@Bean` 메서드는 `PasswordEncoder`를 Spring 컨테이너에 등록한다.
+- `SecurityConfig`의 `@Bean` 메서드는 `PasswordEncoder`, JWT 인코더·디코더와 보안 필터 체인을 등록한다.
 - `@RestController`, `@Service`, Spring Data JPA Repository도 컨테이너가 Bean으로 생성·관리한다. Controller와 Service는 `@RequiredArgsConstructor`가 만든 생성자로 필요한 Bean을 주입받는다.
 - `@Transactional`이 선언된 Service 메서드는 Spring 프록시가 호출 전후를 감싼다. 프록시는 실행 전에 트랜잭션을 시작하고, 정상 종료하면 commit하며, 예외가 발생하면 rollback한다.
 
@@ -72,8 +74,11 @@ v2에서는 springdoc Boot starter가 Controller의 OpenAPI 어노테이션을 �
 
 ## 보안 경계
 
-- 게시글과 댓글 비밀번호는 BCrypt 해시로 저장하며 API 응답에 원문을 포함하지 않는다. 비밀번호 검증 실패 로그에도 원문을 기록하지 않는다.
-- 현재 API는 계정 기반 인증, 권한 관리, 요청 횟수 제한을 제공하지 않는다. 리소스 비밀번호는 로컬 또는 신뢰된 환경의 간단한 수정·삭제 보호 수단이며, 인터넷 공개 서비스의 사용자 인증 수단으로 충분하지 않다.
+- 회원 비밀번호는 BCrypt 해시로만 저장한다.
+- Access Token은 15분 HS256 JWT이며 `Authorization: Bearer` 헤더로 전달한다.
+- Refresh Token은 14일 동안 유효하고 원문은 HttpOnly 쿠키로, SHA-256 해시는 DB에 기기별로 저장한다.
+- 게시글과 댓글 조회는 공개하며 생성은 로그인 회원, 수정·삭제는 작성자만 허용한다.
+- 인증은 stateless이며 Security 필터의 401/403도 `ApiResponse`와 `ErrorCode` 형식으로 반환한다.
 - 외부에 API를 제공할 때는 TLS 종료를 구성하고, 프록시·방화벽에서 애플리케이션과 MySQL의 접근 대상을 제한한다. Swagger UI와 OpenAPI 엔드포인트도 공개 범위에 맞춰 제한한다.
 - Spring Boot와 직접 지정한 라이브러리는 지원되는 보안 패치 버전으로 정기적으로 갱신한다.
 

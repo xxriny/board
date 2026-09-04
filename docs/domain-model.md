@@ -1,62 +1,77 @@
 # 도메인 및 데이터 모델
 
-## ERD
-
-편집 가능한 원본은 [`board.erd`](board.erd)이다. `name`에는 MySQL 물리명, `comment`에는 한글 논리명을 기록한다.
+## 관계
 
 ```text
-boards 1 ───────── 0..N comments
-  id PK                 id PK
-                       board_id FK NOT NULL
+members 1 ─── 0..N boards
+members 1 ─── 0..N comments
+members 1 ─── 0..N refresh_tokens
+boards  1 ─── 0..N comments
 ```
 
-게시글은 댓글이 없어도 존재할 수 있고, 댓글은 반드시 하나의 게시글에 속한다.
+게시글과 댓글은 반드시 한 회원이 작성한다. 댓글은 반드시 한 게시글에 속하며 부모 댓글 연관관계는 두지 않는다.
+
+## Member
+
+| Java 필드 | 물리명 | 제약 |
+|---|---|---|
+| `id` | `id` | PK, identity |
+| `email` | `email` | not null, unique |
+| `passwordHash` | `password_hash` | not null, BCrypt |
+| `nickname` | `nickname` | not null, unique |
+| `phone` | `phone` | not null, unique |
+| `role` | `role` | not null, `USER` |
+| `createdAt` | `created_at` | not null |
+| `updatedAt` | `updated_at` | not null |
+
+이메일은 소문자, 전화번호는 하이픈 없는 숫자로 저장한다. 이메일과 role은 수정하지 않고 `updateProfile`로 닉네임과 전화번호만 변경한다.
+
+## RefreshToken
+
+| Java 필드 | 물리명 | 제약 |
+|---|---|---|
+| `id` | `id` | PK, identity |
+| `member` | `member_id` | FK, not null, lazy |
+| `tokenHash` | `token_hash` | SHA-256, unique |
+| `expiresAt` | `expires_at` | not null |
+| `createdAt` | `created_at` | not null |
+| `updatedAt` | `updated_at` | not null |
+
+로그인 기기마다 행을 하나 생성한다. 원문은 저장하지 않으며 재발급 시 기존 행을 소비하고 새 행을 만든다.
 
 ## Board
 
-| 논리명 | Java 필드 | 물리명 | Java 타입 | 제약 |
-| --- | --- | --- | --- | --- |
-| 게시글 식별자 | `id` | `id` | `Long` | PK, identity |
-| 게시글 제목 | `title` | `title` | `String` | not null, 최대 200자 |
-| 게시글 내용 | `content` | `content` | `String` | TEXT, null 허용 |
-| 게시글 작성자 | `writer` | `writer` | `String` | not null, 최대 100자 |
-| 게시글 비밀번호 해시 | `passwordHash` | `password_hash` | `String` | not null, BCrypt 60자 |
-| 조회수 | `viewCount` | `view_count` | `int` | not null, 기본값 0 |
-| 댓글 수 | `commentCount` | `comment_count` | `int` | not null, 기본값 0, 비정규화 집계 컬럼 |
-| 생성 시각 | `createdAt` | `created_at` | `LocalDateTime` | not null |
-| 수정 시각 | `updatedAt` | `updated_at` | `LocalDateTime` | not null |
+| Java 필드 | 물리명 | 제약 |
+|---|---|---|
+| `id` | `id` | PK, identity |
+| `title` | `title` | not null, 최대 200자 |
+| `content` | `content` | TEXT, null 허용 |
+| `author` | `member_id` | FK, not null, lazy |
+| `viewCount` | `view_count` | not null, 기본값 0 |
+| `commentCount` | `comment_count` | not null, 기본값 0 |
+| `createdAt` | `created_at` | not null |
+| `updatedAt` | `updated_at` | not null |
 
-JPA 테이블명은 `boards`다. `comments`는 `@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)`로 매핑하며 컬렉션은 빈 `ArrayList`로 초기화한다. `commentCount`는 `boards.comment_count`에 저장하는 비정규화 집계 값이다. 댓글 생성·삭제와 같은 Service 트랜잭션에서 `comment_count = comment_count + 1`, `comment_count = greatest(comment_count - 1, 0)` 원자적 UPDATE로 변경한다. 기존 `@Formula` 코드는 구현 비교를 위해 주석으로만 보존한다.
-
-게시글 비밀번호 원문은 저장하지 않는다. Service에서 BCrypt로 해시해 `password_hash`에 저장하고 수정·삭제 요청 시 입력값과 비교한다. 외부 응답 DTO에는 해시를 포함하지 않는다.
-
-허용된 상태 변경 메서드:
-
-- `update(String title, String content)`
-- `increaseViewCount()`
-- `addComment(Comment comment)`
-- `removeComment(Comment comment)`
-
-`@PrePersist`에서 생성/수정 시각과 조회수 기본값을 보장한다. `update(String title, String content)`는 수정 시각을 즉시 갱신해 API 응답과 저장값의 의미를 일치시키며, 조회수 증가는 수정 시각에 영향을 주지 않는다.
+`writer`와 게시글 `password_hash`는 사용하지 않는다. API의 writer는 `author.nickname`에서 변환한다. 수정·삭제 전에 `isOwnedBy(memberId)`로 소유자를 확인한다.
 
 ## Comment
 
-| 논리명 | Java 필드 | 물리명 | Java 타입 | 제약 |
-| --- | --- | --- | --- | --- |
-| 댓글 식별자 | `id` | `id` | `Long` | PK, identity |
-| 댓글 내용 | `content` | `content` | `String` | not null, 최대 1000자 |
-| 댓글 작성자 | `writer` | `writer` | `String` | not null, 최대 100자 |
-| 댓글 비밀번호 해시 | `passwordHash` | `password_hash` | `String` | not null, BCrypt 60자 |
-| 게시글 식별자 | `board` | `board_id` | `Board` | FK, not null, lazy |
-| 생성 시각 | `createdAt` | `created_at` | `LocalDateTime` | not null |
-| 수정 시각 | `updatedAt` | `updated_at` | `LocalDateTime` | not null |
+| Java 필드 | 물리명 | 제약 |
+|---|---|---|
+| `id` | `id` | PK, identity |
+| `content` | `content` | not null, 최대 1000자 |
+| `author` | `member_id` | FK, not null, lazy |
+| `board` | `board_id` | FK, not null, lazy |
+| `createdAt` | `created_at` | not null |
+| `updatedAt` | `updated_at` | not null |
 
-JPA 테이블명은 `comments`다. `board`는 `@ManyToOne(fetch = FetchType.LAZY, optional = false)`와 `@JoinColumn(name = "board_id", nullable = false)`로 매핑한다. 부모 댓글 필드는 만들지 않는다. 댓글 비밀번호 원문은 저장하지 않고 Service에서 BCrypt로 해시해 `password_hash`에 저장한다. 수정·삭제 시 입력 비밀번호와 비교하며 외부 응답에는 해시를 포함하지 않는다. 댓글 수정은 `update(String content)`로 내용과 `updatedAt`을 즉시 변경해 수정 응답에도 새 시각을 포함한다. 작성자와 소속 게시글은 유지한다.
+`writer`와 댓글 `password_hash`는 사용하지 않는다. API의 writer는 `author.nickname`에서 변환한다. 댓글은 `boardId`와 `commentId`를 함께 조회해 소속을 확인한다.
 
 ## 엔티티 구현 규칙
 
-- 두 엔티티 모두 Lombok `@Getter`, `@NoArgsConstructor(access = AccessLevel.PROTECTED)`, `@Builder`를 사용한다.
-- public Setter를 만들지 않는다.
-- 빌더로 외부에서 `id`, 시간 필드 및 조회수를 주입하지 못하게 생성 API를 제한한다.
-- `toString`, `equals`, `hashCode`에 연관관계 필드를 포함하지 않는다.
-- API 계층에 엔티티를 반환하지 않는다.
+- 모든 시간 관리 엔티티는 `BaseTimeEntity`를 상속한다.
+- public Setter를 두지 않고 도메인 메서드로 상태를 변경한다.
+- 연관관계는 기본적으로 LAZY를 사용한다.
+- Entity를 API 응답으로 직접 반환하지 않는다.
+- 게시글 삭제 시 댓글은 cascade 삭제한다.
+- 댓글 수는 댓글 생성·삭제 트랜잭션에서 원자적 UPDATE로 관리한다.

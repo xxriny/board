@@ -4,8 +4,8 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -239,
-    "scrollLeft": -5,
+    "scrollTop": -265.1666,
+    "scrollLeft": -5.1667,
     "zoomLevel": 1,
     "show": 431,
     "database": 4,
@@ -70,14 +70,14 @@
         ],
         "ui": {
           "x": 58,
-          "y": 264,
+          "y": 248,
           "zIndex": 1,
           "widthName": 60,
           "widthComment": 60,
           "color": "#4DABF7"
         },
         "meta": {
-          "updateAt": 1788239513081,
+          "updateAt": 1788502177490,
           "createAt": 0
         }
       },
@@ -104,15 +104,15 @@
           "0KTDN_ZKSgeyndZcmYIHF"
         ],
         "ui": {
-          "x": 590,
-          "y": 281,
+          "x": 665,
+          "y": 269,
           "zIndex": 2,
           "widthName": 61,
           "widthComment": 60,
           "color": "#69DB7C"
         },
         "meta": {
-          "updateAt": 1788243393253,
+          "updateAt": 1788502178140,
           "createAt": 0
         }
       }
@@ -451,7 +451,7 @@
             "boardId"
           ],
           "x": 524,
-          "y": 400,
+          "y": 384,
           "direction": 2
         },
         "end": {
@@ -459,8 +459,8 @@
           "columnIds": [
             "commentBoardId"
           ],
-          "x": 590,
-          "y": 393,
+          "x": 665,
+          "y": 381,
           "direction": 1
         },
         "meta": {
