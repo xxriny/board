@@ -12,13 +12,28 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 class GlobalExceptionHandlerTest {
 
     @Test
-    void returnsNotFoundForUnknownResourcePath() {
+    void returnsConfiguredStatusAndCodeForBusinessException() {
+        ResponseEntity<ApiResponse<Void>> response = new GlobalExceptionHandler()
+                .handleBusiness(new BusinessException(ErrorCode.BOARD_NOT_FOUND));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().isSuccess()).isFalse();
+        assertThat(response.getBody().getCode()).isEqualTo("BOARD_NOT_FOUND");
+        assertThat(response.getBody().getMessage())
+                .isEqualTo("게시글을 찾을 수 없습니다.");
+    }
+
+    @Test
+    void returnsApiNotFoundCodeForUnknownResourcePath() {
         ResponseEntity<ApiResponse<Void>> response = new GlobalExceptionHandler()
                 .handleNoResource(new NoResourceFoundException(HttpMethod.GET, "not-found"));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().isSuccess()).isFalse();
-        assertThat(response.getBody().getMessage()).isEqualTo("요청한 경로를 찾을 수 없습니다.");
+        assertThat(response.getBody().getCode()).isEqualTo("API_NOT_FOUND");
+        assertThat(response.getBody().getMessage())
+                .isEqualTo("요청한 API를 찾을 수 없습니다.");
     }
 }
