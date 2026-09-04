@@ -10,10 +10,14 @@ import org.springframework.data.repository.query.Param;
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Modifying(flushAutomatically = true)
-    @Query(value = "update boards set comment_count = comment_count + 1 where id = :boardId", nativeQuery = true)
+    @Query(
+            value = "update boards set comment_count = comment_count + 1 where id = :boardId",
+            nativeQuery = true)
     int incrementCommentCount(@Param("boardId") Long boardId);
 
     @Modifying(flushAutomatically = true)
-    @Query(value = "update boards set comment_count = greatest(comment_count - 1, 0) where id = :boardId", nativeQuery = true)
+    @Query(
+            value = "update boards set comment_count = greatest(comment_count - 1, 0) where id = :boardId",
+            nativeQuery = true)
     int decrementCommentCount(@Param("boardId") Long boardId);
 }

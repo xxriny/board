@@ -1,18 +1,19 @@
 package com.xxrin.board.service;
 
 import com.xxrin.board.domain.Board;
+import com.xxrin.board.domain.Member;
 import com.xxrin.board.dto.request.BoardCreateRequest;
 import com.xxrin.board.dto.request.BoardUpdateRequest;
 import com.xxrin.board.dto.response.BoardDetailResponse;
 import com.xxrin.board.dto.response.BoardResponse;
 import com.xxrin.board.dto.response.PageResponse;
-import com.xxrin.board.exception.EntityNotFoundException;
-import com.xxrin.board.exception.InvalidPasswordException;
+import com.xxrin.board.exception.BusinessException;
+import com.xxrin.board.exception.ErrorCode;
 import com.xxrin.board.repository.BoardRepository;
+import com.xxrin.board.repository.MemberRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,56 +24,63 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
     private final BoardRepository boardRepository;
-    private final PasswordEncoder passwordEncoder;
+
+    private final MemberRepository memberRepository;
 
     @Transactional
-    public BoardResponse create(BoardCreateRequest request) {
-        Board board = Board.builder()
-                .title(request.title())
-                .content(request.content())
-                .writer(request.writer())
-                .passwordHash(passwordEncoder.encode(request.password()))
-                .build();
+    public BoardResponse create(Long memberId, BoardCreateRequest request) {
+        Member author = memberRepository.getReferenceById(memberId);
+        Board board = request.toEntity(author);
         return BoardResponse.from(boardRepository.save(board));
     }
 
     @Transactional(readOnly = true)
     public PageResponse<BoardResponse> findAll(int page, int size) {
-        Page<Board> boards = boardRepository.findAll(PageRequest.of(
-                page, size, Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("id"))));
-        return PageResponse.of(boards.getContent().stream()
-                .map(BoardResponse::from)
-                .toList(), page, size, boards.getTotalElements());
+        Page<BoardResponse> boards = boardRepository
+                .findAll(PageRequest.of(
+                        page,
+                        size,
+                        Sort.by(Sort.Direction.DESC, "createdAt", "id")))
+                .map(BoardResponse::from);
+        return PageResponse.from(boards);
     }
 
     @Transactional
     public BoardDetailResponse findDetail(Long id) {
-        Board board = boardRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+        Board board = findBoard(id);
         board.increaseViewCount();
         return BoardDetailResponse.from(board);
     }
 
     @Transactional
-    public BoardResponse update(Long id, BoardUpdateRequest request) {
-        Board board = boardRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
-        verifyPassword(request.password(), board.getPasswordHash());
+    public BoardResponse update(Long memberId, Long id, BoardUpdateRequest request) {
+        Board board = findBoard(id);
+        verifyOwner(board, memberId);
         board.update(request.title(), request.content());
         return BoardResponse.from(board);
     }
 
     @Transactional
-    public void delete(Long id, String password) {
-        Board board = boardRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
-        verifyPassword(password, board.getPasswordHash());
+    public void delete(Long memberId, Long id) {
+        Board board = findBoard(id);
+        verifyOwner(board, memberId);
         boardRepository.delete(board);
     }
 
-    private void verifyPassword(String rawPassword, String passwordHash) {
-        if (passwordHash == null || !passwordEncoder.matches(rawPassword, passwordHash)) {
-            throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
+    /** 게시글 조회와 404 변환을 한곳에서 처리한다. */
+    private Board findBoard(Long id) {
+        return boardRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.BOARD_NOT_FOUND));
+    }
+
+    private void verifyOwner(Board board, Long memberId) {
+        if (!board.isOwnedBy(memberId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_RESOURCE);
         }
     }
+
+    /*
+     * Legacy: 비회원 비밀번호 방식 비교용
+     * private void verifyPassword(String rawPassword, String passwordHash) { ... }
+     */
 }

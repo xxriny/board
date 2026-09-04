@@ -1,5 +1,7 @@
 package com.xxrin.board.dto.request;
 
+import com.xxrin.board.domain.Board;
+import com.xxrin.board.domain.Member;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -10,13 +12,19 @@ public record BoardCreateRequest(
         String title,
 
         @Size(max = 10000, message = "내용은 10000자 이하여야 합니다.")
-        String content,
+        String content) {
 
-        @NotBlank(message = "작성자는 필수입니다.")
-        @Size(max = 100, message = "작성자는 100자 이하여야 합니다.")
-        String writer,
+    /*
+     * Legacy: 비회원 비밀번호 방식 비교용
+     * String writer,
+     * String password
+     */
 
-        @NotBlank(message = "비밀번호는 필수입니다.")
-        @Size(min = 4, max = 16, message = "비밀번호는 4자 이상 16자 이하여야 합니다.")
-        String password) {
+    public Board toEntity(Member author) {
+        return Board.builder()
+                .title(title)
+                .content(content)
+                .author(author)
+                .build();
+    }
 }

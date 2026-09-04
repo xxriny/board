@@ -5,14 +5,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.xxrin.board.domain.Board;
+import com.xxrin.board.domain.Member;
 import com.xxrin.board.dto.response.PageResponse;
 import com.xxrin.board.repository.BoardRepository;
+import com.xxrin.board.repository.MemberRepository;
 import com.xxrin.board.service.BoardService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 class BoardListTest {
@@ -24,11 +25,13 @@ class BoardListTest {
         Board second = board(1L, "첫 번째");
         when(repository.findAll(org.mockito.ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(List.of(first, second), PageRequest.of(1, 2), 12));
-        BoardService service = new BoardService(repository, mock(PasswordEncoder.class));
+        BoardService service = new BoardService(repository, mock(MemberRepository.class));
 
         PageResponse<?> response = service.findAll(1, 2);
 
-        assertThat(response.content()).extracting("id").containsExactly(2L, 1L);
+        assertThat(response.content())
+                .extracting("id")
+                .containsExactly(2L, 1L);
         assertThat(response.page()).isEqualTo(1);
         assertThat(response.size()).isEqualTo(2);
         assertThat(response.totalElements()).isEqualTo(12L);
@@ -39,7 +42,11 @@ class BoardListTest {
         Board board = Board.builder()
                 .title(title)
                 .content("내용")
-                .writer("작성자")
+                .author(Member.create(
+                        "user@example.com",
+                        "hash",
+                        "작성자",
+                        "01012345678"))
                 .build();
         ReflectionTestUtils.setField(board, "id", id);
         return board;

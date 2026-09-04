@@ -8,9 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "comments")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment {
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,27 +28,26 @@ public class Comment {
     @Column(nullable = false, length = 1000)
     private String content;
 
-    @Column(nullable = false, length = 100)
-    private String writer;
+    /*
+     * Legacy: 비회원 비밀번호 방식 비교용
+     * @Column(nullable = false, length = 100)
+     * private String writer;
+     * @Column(name = "password_hash", nullable = false, length = 60)
+     * private String passwordHash;
+     */
 
-    @Column(name = "password_hash", nullable = false, length = 60)
-    private String passwordHash;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member author;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
     @Builder
-    private Comment(String content, String writer, String passwordHash, Board board) {
+    private Comment(String content, Member author, Board board) {
         this.content = content;
-        this.writer = writer;
-        this.passwordHash = passwordHash;
+        this.author = author;
         if (board != null) {
             board.addComment(this);
         }
@@ -69,14 +66,11 @@ public class Comment {
     /** 댓글 작성자는 유지하고 내용만 변경한다. */
     public void update(String content) {
         this.content = content;
-        this.updatedAt = LocalDateTime.now();
+        touch();
     }
 
-    @PrePersist
-    private void prePersist() {
-        LocalDateTime now = LocalDateTime.now();
-        createdAt = now;
-        updatedAt = now;
+    public boolean isOwnedBy(Long memberId) {
+        return author.getId().equals(memberId);
     }
 
 }

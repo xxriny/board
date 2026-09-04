@@ -8,32 +8,35 @@ import static org.mockito.Mockito.when;
 
 import com.xxrin.board.domain.Board;
 import com.xxrin.board.domain.Comment;
+import com.xxrin.board.domain.Member;
 import com.xxrin.board.dto.request.CommentCreateRequest;
 import com.xxrin.board.repository.BoardRepository;
 import com.xxrin.board.repository.CommentRepository;
+import com.xxrin.board.repository.MemberRepository;
 import com.xxrin.board.service.CommentService;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 class CommentCreateTest {
 
     @Test
-    void createsCommentForExistingBoard() {
+    void createsCommentForAuthenticatedMember() {
         BoardRepository boards = mock(BoardRepository.class);
         CommentRepository comments = mock(CommentRepository.class);
-        PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
-        Board board = Board.builder().title("제목").writer("작성자").passwordHash("hash").build();
+        MemberRepository members = mock(MemberRepository.class);
+        Member author = Member.create("user@example.com", "hash", "댓글 작성자", "01012345678");
+        Board board = Board.builder()
+                .title("제목")
+                .author(author)
+                .build();
         when(boards.findById(1L)).thenReturn(Optional.of(board));
+        when(members.getReferenceById(10L)).thenReturn(author);
         when(comments.save(any(Comment.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(passwordEncoder.encode("1234")).thenReturn("encoded-password");
 
-        var response = new CommentService(boards, comments, passwordEncoder)
-                .create(1L, new CommentCreateRequest("댓글", "댓글 작성자", "1234"));
+        var response = new CommentService(boards, comments, members)
+                .create(10L, 1L, new CommentCreateRequest("댓글"));
 
-        assertThat(response.content()).isEqualTo("댓글");
-        assertThat(board.getComments()).hasSize(1);
-        assertThat(board.getComments().get(0).getPasswordHash()).isEqualTo("encoded-password");
+        assertThat(response.writer()).isEqualTo("댓글 작성자");
         verify(boards).incrementCommentCount(1L);
     }
 }

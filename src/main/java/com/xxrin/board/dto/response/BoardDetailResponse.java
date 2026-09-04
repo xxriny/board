@@ -17,14 +17,15 @@ public record BoardDetailResponse(
         List<CommentResponse> comments) {
 
     public static BoardDetailResponse from(Board board) {
-        List<CommentResponse> comments = board.getComments().stream()
+        List<CommentResponse> comments = board.getComments()
+                .stream()
                 .map(CommentResponse::from)
                 .toList();
         return new BoardDetailResponse(
                 board.getId(),
                 board.getTitle(),
                 board.getContent(),
-                board.getWriter(),
+                board.getAuthor().getNickname(),
                 board.getViewCount(),
                 board.getCommentCount(),
                 board.getCreatedAt(),

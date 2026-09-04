@@ -6,6 +6,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.xxrin.board.domain.Board;
 import com.xxrin.board.domain.Comment;
+import com.xxrin.board.domain.Member;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import java.util.Map;
@@ -28,6 +29,7 @@ class MySqlJpaIntegrationTest {
             .withPassword("board_password");
 
     private static HikariDataSource dataSource;
+
     private static EntityManagerFactory entityManagerFactory;
 
     @BeforeAll
@@ -65,9 +67,22 @@ class MySqlJpaIntegrationTest {
     void deletingBoardCascadesToComments() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
+        Member author = Member.create(
+                "user@example.com",
+                "$2a$10$abcdefghijklmnopqrstuv1234567890123456789012345678901",
+                "작성자",
+                "01012345678");
+        entityManager.persist(author);
         Board board = Board.builder()
-                .title("제목").content("내용").writer("작성자").passwordHash("hash").build();
-        Comment.builder().content("댓글").writer("댓글 작성자").passwordHash("comment-hash").board(board).build();
+                .title("제목")
+                .content("내용")
+                .author(author)
+                .build();
+        Comment.builder()
+                .content("댓글")
+                .author(author)
+                .board(board)
+                .build();
         entityManager.persist(board);
         entityManager.getTransaction().commit();
         Long boardId = board.getId();

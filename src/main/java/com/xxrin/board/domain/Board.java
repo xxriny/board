@@ -5,12 +5,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,14 +19,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Formula;
 
 /** 게시글의 상태와 댓글 연관관계를 관리하는 JPA 엔티티다. */
 @Entity
 @Table(name = "boards")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Board {
+public class Board extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,11 +37,19 @@ public class Board {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = false, length = 100)
-    private String writer;
+    /*
+     * Legacy: 비회원 비밀번호 방식 비교용
+     *
+     * @Column(nullable = false, length = 100)
+     * private String writer;
+     *
+     * @Column(name = "password_hash", nullable = false, length = 60)
+     * private String passwordHash;
+     */
 
-    @Column(name = "password_hash", nullable = false, length = 60)
-    private String passwordHash;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member author;
 
     @Column(name = "view_count", nullable = false)
     private int viewCount;
@@ -52,34 +60,31 @@ public class Board {
     @Column(name = "comment_count", nullable = false, columnDefinition = "int default 0")
     private int commentCount;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("createdAt ASC, id ASC")
     private final List<Comment> comments = new ArrayList<>();
 
     @Builder
-    private Board(String title, String content, String writer, String passwordHash) {
+    private Board(String title, String content, Member author) {
         this.title = title;
         this.content = content;
-        this.writer = writer;
-        this.passwordHash = passwordHash;
+        this.author = author;
     }
 
     /** 수정 가능한 제목과 본문만 변경한다. */
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
-        this.updatedAt = LocalDateTime.now();
+        touch();
     }
 
     /** 상세 조회 시 조회수를 한 건 증가시킨다. */
     public void increaseViewCount() {
         viewCount++;
+    }
+
+    public boolean isOwnedBy(Long memberId) {
+        return author.getId().equals(memberId);
     }
 
     /** 댓글을 게시글에 연결하고 양방향 연관관계를 동기화한다. */
@@ -101,11 +106,4 @@ public class Board {
     public List<Comment> getComments() {
         return Collections.unmodifiableList(comments);
     }
-    @PrePersist
-    private void prePersist() {
-        LocalDateTime now = LocalDateTime.now();
-        createdAt = now;
-        updatedAt = now;
-    }
-
 }
