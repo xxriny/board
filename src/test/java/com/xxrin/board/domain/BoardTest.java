@@ -25,7 +25,7 @@ class BoardTest {
 
         assertThat(board.getTitle()).isEqualTo("변경 제목");
         assertThat(board.getContent()).isEqualTo("변경 내용");
-        assertThat(board.getWriter()).isEqualTo("작성자");
+        assertThat(board.getAuthor().getNickname()).isEqualTo("작성자");
     }
 
     @Test
@@ -33,7 +33,7 @@ class BoardTest {
         Board board = board();
         Comment comment = Comment.builder()
                 .content("댓글")
-                .writer("댓글 작성자")
+                .author(member("댓글 작성자"))
                 .board(board)
                 .build();
 
@@ -50,7 +50,11 @@ class BoardTest {
         return Board.builder()
                 .title("제목")
                 .content("내용")
-                .writer("작성자")
+                .author(member("작성자"))
                 .build();
+    }
+
+    private Member member(String nickname) {
+        return Member.create(nickname + "@example.com", "hash", nickname, "01012345678");
     }
 }

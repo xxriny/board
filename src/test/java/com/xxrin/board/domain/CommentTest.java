@@ -13,38 +13,43 @@ class CommentTest {
         Board board = Board.builder()
                 .title("제목")
                 .content("내용")
-                .writer("작성자")
+                .author(member("작성자"))
                 .build();
 
         Comment comment = Comment.builder()
                 .content("댓글")
-                .writer("댓글 작성자")
+                .author(member("댓글 작성자"))
                 .board(board)
                 .build();
 
         assertThat(comment.getBoard()).isSameAs(board);
         assertThat(comment.getContent()).isEqualTo("댓글");
-        assertThat(comment.getWriter()).isEqualTo("댓글 작성자");
-        assertThat(Arrays.stream(Comment.class.getDeclaredFields()).map(Field::getName))
+        assertThat(comment.getAuthor().getNickname()).isEqualTo("댓글 작성자");
+        assertThat(Arrays.stream(Comment.class.getDeclaredFields())
+                .map(Field::getName))
                 .doesNotContain("parent", "parentComment");
     }
 
     @Test
-    void updateChangesCommentContentAndModelContainsUpdatedAt() throws NoSuchFieldException {
+    void updateChangesCommentContentAndUpdatedAt() {
         Board board = Board.builder()
                 .title("제목")
                 .content("내용")
-                .writer("작성자")
+                .author(member("작성자"))
                 .build();
         Comment comment = Comment.builder()
                 .content("기존 댓글")
-                .writer("댓글 작성자")
+                .author(member("댓글 작성자"))
                 .board(board)
                 .build();
 
         comment.update("수정 댓글");
 
         assertThat(comment.getContent()).isEqualTo("수정 댓글");
-        assertThat(Comment.class.getDeclaredField("updatedAt")).isNotNull();
+        assertThat(comment.getUpdatedAt()).isNotNull();
+    }
+
+    private Member member(String nickname) {
+        return Member.create(nickname + "@example.com", "hash", nickname, "01012345678");
     }
 }

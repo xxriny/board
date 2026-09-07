@@ -6,39 +6,50 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.xxrin.board.domain.Board;
-import com.xxrin.board.exception.InvalidPasswordException;
+import com.xxrin.board.domain.Member;
+import com.xxrin.board.exception.BusinessException;
+import com.xxrin.board.exception.ErrorCode;
 import com.xxrin.board.repository.BoardRepository;
+import com.xxrin.board.repository.MemberRepository;
 import com.xxrin.board.service.BoardService;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class BoardDeleteTest {
 
     @Test
-    void serviceDeletesBoardWhenPasswordMatches() {
+    void ownerCanDeleteBoard() {
         BoardRepository repository = mock(BoardRepository.class);
-        PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
-        Board board = Board.builder().title("제목").writer("작성자")
-                .passwordHash("encoded-password").build();
+        Member owner = Member.create("owner@example.com", "hash", "작성자", "01012345678");
+        ReflectionTestUtils.setField(owner, "id", 10L);
+        Board board = Board.builder()
+                .title("제목")
+                .author(owner)
+                .build();
         when(repository.findById(1L)).thenReturn(Optional.of(board));
-        when(passwordEncoder.matches("1234", "encoded-password")).thenReturn(true);
-        BoardService service = new BoardService(repository, passwordEncoder);
+        BoardService service = new BoardService(repository, mock(MemberRepository.class));
 
-        service.delete(1L, "1234");
+        service.delete(10L, 1L);
 
         verify(repository).delete(board);
     }
 
     @Test
-    void serviceDoesNotDeleteBoardWhenPasswordDoesNotMatch() {
+    void anotherMemberCannotDeleteBoard() {
         BoardRepository repository = mock(BoardRepository.class);
-        Board board = Board.builder().title("제목").writer("작성자")
-                .passwordHash("encoded-password").build();
+        Member owner = Member.create("owner@example.com", "hash", "작성자", "01012345678");
+        ReflectionTestUtils.setField(owner, "id", 10L);
+        Board board = Board.builder()
+                .title("제목")
+                .author(owner)
+                .build();
         when(repository.findById(1L)).thenReturn(Optional.of(board));
-        BoardService service = new BoardService(repository, mock(PasswordEncoder.class));
+        BoardService service = new BoardService(repository, mock(MemberRepository.class));
 
-        assertThatThrownBy(() -> service.delete(1L, "wrong"))
-                .isInstanceOf(InvalidPasswordException.class);
+        assertThatThrownBy(() -> service.delete(999L, 1L))
+                .isInstanceOfSatisfying(BusinessException.class, exception ->
+                        org.assertj.core.api.Assertions.assertThat(exception.getErrorCode())
+                                .isEqualTo(ErrorCode.FORBIDDEN_RESOURCE));
     }
 }

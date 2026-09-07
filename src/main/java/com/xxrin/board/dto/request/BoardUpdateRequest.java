@@ -10,9 +10,7 @@ public record BoardUpdateRequest(
         String title,
 
         @Size(max = 10000, message = "내용은 10000자 이하여야 합니다.")
-        String content,
+        String content) {
 
-        @NotBlank(message = "비밀번호는 필수입니다.")
-        @Size(min = 4, max = 16, message = "비밀번호는 4자 이상 16자 이하여야 합니다.")
-        String password) {
+    /* Legacy: 비회원 비밀번호 방식 비교용 - String password */
 }

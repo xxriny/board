@@ -10,16 +10,21 @@ public record BoardResponse(
         String content,
         String writer,
         int viewCount,
+        long commentCount,
         LocalDateTime createdAt,
         LocalDateTime updatedAt) {
+
+
+
 
     public static BoardResponse from(Board board) {
         return new BoardResponse(
                 board.getId(),
                 board.getTitle(),
                 board.getContent(),
-                board.getWriter(),
+                board.getAuthor().getNickname(),
                 board.getViewCount(),
+                board.getCommentCount(),
                 board.getCreatedAt(),
                 board.getUpdatedAt());
     }

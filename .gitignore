@@ -9,10 +9,13 @@ out/
 ### Gradle ###
 .gradle/
 build/
+logs/
 .worktrees/
 
 ### Local environment ###
 .env
+/docs/authentication.local.md
+/docs/authentication-plan.local.md
 
 ### Eclipse ###
 .apt_generated

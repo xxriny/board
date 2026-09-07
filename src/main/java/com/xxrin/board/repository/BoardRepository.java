@@ -1,42 +1,23 @@
 package com.xxrin.board.repository;
 
 import com.xxrin.board.domain.Board;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-/** EntityManager를 직접 사용하는 게시글 영속성 컴포넌트다. */
-@Repository
-public class BoardRepository {
+/** Spring Data JPA 기반 게시글 Repository다. */
+public interface BoardRepository extends JpaRepository<Board, Long> {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query(
+            value = "update boards set comment_count = comment_count + 1 where id = :boardId",
+            nativeQuery = true)
+    int incrementCommentCount(@Param("boardId") Long boardId);
 
-    public Board save(Board board) {
-        entityManager.persist(board);
-        return board;
-    }
-
-    public List<Board> findPage(int page, int size) {
-        return entityManager.createQuery(
-                        "select b from Board b order by b.createdAt desc, b.id desc", Board.class)
-                .setFirstResult(page * size)
-                .setMaxResults(size)
-                .getResultList();
-    }
-
-    public long count() {
-        return entityManager.createQuery("select count(b) from Board b", Long.class)
-                .getSingleResult();
-    }
-
-    public Optional<Board> findById(Long id) {
-        return Optional.ofNullable(entityManager.find(Board.class, id));
-    }
-
-    public void delete(Board board) {
-        entityManager.remove(board);
-    }
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query(
+            value = "update boards set comment_count = greatest(comment_count - 1, 0) where id = :boardId",
+            nativeQuery = true)
+    int decrementCommentCount(@Param("boardId") Long boardId);
 }
