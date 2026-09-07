@@ -1,6 +1,6 @@
 package com.xxrin.board.exception;
 
-import com.xxrin.board.dto.response.ApiResponse;
+import com.xxrin.board.dto.response.ApiResult;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Map;
@@ -26,15 +26,15 @@ public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ApiResponse<Void>> handleBusiness(BusinessException exception) {
+    public ResponseEntity<ApiResult<Void>> handleBusiness(BusinessException exception) {
         ErrorCode errorCode = exception.getErrorCode();
         log.warn("Business request failed: {}", errorCode);
         return ResponseEntity.status(errorCode.getStatus())
-                .body(ApiResponse.error(errorCode));
+                .body(ApiResult.error(errorCode));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidation(
+    public ResponseEntity<ApiResult<Map<String, String>>> handleValidation(
             MethodArgumentNotValidException exception) {
         Map<String, String> errors = new TreeMap<>();
         for (FieldError error : exception.getBindingResult().getFieldErrors()) {
@@ -42,11 +42,11 @@ public class GlobalExceptionHandler {
         }
         log.warn("Validation failed: {}", errors);
         return ResponseEntity.badRequest()
-                .body(ApiResponse.error(errors, ErrorCode.VALIDATION_FAILED));
+                .body(ApiResult.error(errors, ErrorCode.VALIDATION_FAILED));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ApiResponse<Map<String, String>>> handleConstraintViolation(
+    public ResponseEntity<ApiResult<Map<String, String>>> handleConstraintViolation(
             ConstraintViolationException exception) {
         Map<String, String> errors = new TreeMap<>();
         for (ConstraintViolation<?> violation : exception.getConstraintViolations()) {
@@ -54,46 +54,46 @@ public class GlobalExceptionHandler {
         }
         log.warn("Constraint validation failed: {}", errors);
         return ResponseEntity.badRequest()
-                .body(ApiResponse.error(errors, ErrorCode.VALIDATION_FAILED));
+                .body(ApiResult.error(errors, ErrorCode.VALIDATION_FAILED));
     }
 
     @ExceptionHandler({
             HttpMessageNotReadableException.class,
             MethodArgumentTypeMismatchException.class
     })
-    public ResponseEntity<ApiResponse<Void>> handleBadRequest(Exception exception) {
+    public ResponseEntity<ApiResult<Void>> handleBadRequest(Exception exception) {
         log.warn("Bad request: {}", exception.getMessage());
         return ResponseEntity.badRequest()
-                .body(ApiResponse.error(ErrorCode.INVALID_REQUEST));
+                .body(ApiResult.error(ErrorCode.INVALID_REQUEST));
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleNoResource(NoResourceFoundException exception) {
+    public ResponseEntity<ApiResult<Void>> handleNoResource(NoResourceFoundException exception) {
         log.warn("Resource not found: {}", exception.getResourcePath());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.error(ErrorCode.API_NOT_FOUND));
+                .body(ApiResult.error(ErrorCode.API_NOT_FOUND));
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ApiResponse<Void>> handleMethodNotAllowed(
+    public ResponseEntity<ApiResult<Void>> handleMethodNotAllowed(
             HttpRequestMethodNotSupportedException exception) {
         log.warn("Method not allowed: {}", exception.getMethod());
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
-                .body(ApiResponse.error(ErrorCode.METHOD_NOT_ALLOWED));
+                .body(ApiResult.error(ErrorCode.METHOD_NOT_ALLOWED));
     }
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<ApiResponse<Void>> handleUnsupportedMediaType(
+    public ResponseEntity<ApiResult<Void>> handleUnsupportedMediaType(
             HttpMediaTypeNotSupportedException exception) {
         log.warn("Unsupported media type: {}", exception.getContentType());
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-                .body(ApiResponse.error(ErrorCode.UNSUPPORTED_MEDIA_TYPE));
+                .body(ApiResult.error(ErrorCode.UNSUPPORTED_MEDIA_TYPE));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleUnexpected(Exception exception) {
+    public ResponseEntity<ApiResult<Void>> handleUnexpected(Exception exception) {
         log.error("Unexpected server error", exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR));
+                .body(ApiResult.error(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 }

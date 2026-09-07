@@ -6,7 +6,7 @@ import lombok.Getter;
 
 /** 모든 성공 및 오류 응답에 사용하는 공통 JSON 래퍼다. */
 @Getter
-public final class ApiResponse<T> {
+public final class ApiResult<T> {
 
     private final boolean success;
 
@@ -17,27 +17,27 @@ public final class ApiResponse<T> {
 
     private final String message;
 
-    private ApiResponse(boolean success, T data, String code, String message) {
+    private ApiResult(boolean success, T data, String code, String message) {
         this.success = success;
         this.data = data;
         this.code = code;
         this.message = message;
     }
 
-    public static <T> ApiResponse<T> success(T data, String message) {
-        return new ApiResponse<>(true, data, null, message);
+    public static <T> ApiResult<T> success(T data, String message) {
+        return new ApiResult<>(true, data, null, message);
     }
 
-    public static <T> ApiResponse<T> error(ErrorCode errorCode) {
-        return new ApiResponse<>(
+    public static <T> ApiResult<T> error(ErrorCode errorCode) {
+        return new ApiResult<>(
                 false,
                 null,
                 errorCode.name(),
                 errorCode.getMessage());
     }
 
-    public static <T> ApiResponse<T> error(T data, ErrorCode errorCode) {
-        return new ApiResponse<>(
+    public static <T> ApiResult<T> error(T data, ErrorCode errorCode) {
+        return new ApiResult<>(
                 false,
                 data,
                 errorCode.name(),

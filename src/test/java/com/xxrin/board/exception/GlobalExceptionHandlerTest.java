@@ -2,7 +2,7 @@ package com.xxrin.board.exception;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.xxrin.board.dto.response.ApiResponse;
+import com.xxrin.board.dto.response.ApiResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void returnsConfiguredStatusAndCodeForBusinessException() {
-        ResponseEntity<ApiResponse<Void>> response = new GlobalExceptionHandler()
+        ResponseEntity<ApiResult<Void>> response = new GlobalExceptionHandler()
                 .handleBusiness(new BusinessException(ErrorCode.BOARD_NOT_FOUND));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -26,7 +26,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void returnsApiNotFoundCodeForUnknownResourcePath() {
-        ResponseEntity<ApiResponse<Void>> response = new GlobalExceptionHandler()
+        ResponseEntity<ApiResult<Void>> response = new GlobalExceptionHandler()
                 .handleNoResource(new NoResourceFoundException(HttpMethod.GET, "not-found"));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);

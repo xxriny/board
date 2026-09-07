@@ -1,7 +1,7 @@
 package com.xxrin.board.controller;
 
 import com.xxrin.board.dto.request.MemberUpdateRequest;
-import com.xxrin.board.dto.response.ApiResponse;
+import com.xxrin.board.dto.response.ApiResult;
 import com.xxrin.board.dto.response.MemberResponse;
 import com.xxrin.board.service.MemberService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,17 +25,17 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping
-    public ApiResponse<MemberResponse> findMe(@AuthenticationPrincipal Jwt jwt) {
-        return ApiResponse.success(
+    public ApiResult<MemberResponse> findMe(@AuthenticationPrincipal Jwt jwt) {
+        return ApiResult.success(
                 memberService.findMe(Long.valueOf(jwt.getSubject())),
                 "회원 정보를 조회했습니다.");
     }
 
     @PutMapping
-    public ApiResponse<MemberResponse> updateMe(
+    public ApiResult<MemberResponse> updateMe(
             @AuthenticationPrincipal Jwt jwt,
             @Valid @RequestBody MemberUpdateRequest request) {
-        return ApiResponse.success(
+        return ApiResult.success(
                 memberService.updateMe(Long.valueOf(jwt.getSubject()), request),
                 "회원 정보가 수정되었습니다.");
     }

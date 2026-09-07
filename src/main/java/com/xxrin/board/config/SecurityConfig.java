@@ -1,7 +1,7 @@
 package com.xxrin.board.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xxrin.board.dto.response.ApiResponse;
+import com.xxrin.board.dto.response.ApiResult;
 import com.xxrin.board.exception.ErrorCode;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import jakarta.servlet.http.HttpServletResponse;
@@ -97,6 +97,6 @@ public class SecurityConfig {
             throws IOException {
         response.setStatus(errorCode.getStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        objectMapper.writeValue(response.getOutputStream(), ApiResponse.error(errorCode));
+        objectMapper.writeValue(response.getOutputStream(), ApiResult.error(errorCode));
     }
 }

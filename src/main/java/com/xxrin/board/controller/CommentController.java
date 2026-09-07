@@ -2,7 +2,7 @@ package com.xxrin.board.controller;
 
 import com.xxrin.board.dto.request.CommentCreateRequest;
 import com.xxrin.board.dto.request.CommentUpdateRequest;
-import com.xxrin.board.dto.response.ApiResponse;
+import com.xxrin.board.dto.response.ApiResult;
 import com.xxrin.board.dto.response.CommentResponse;
 import com.xxrin.board.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,19 +35,19 @@ public class CommentController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "댓글 생성")
-    public ApiResponse<CommentResponse> create(
+    public ApiResult<CommentResponse> create(
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable Long boardId,
             @Valid @RequestBody CommentCreateRequest request) {
-        return ApiResponse.success(
+        return ApiResult.success(
                 commentService.create(Long.valueOf(jwt.getSubject()), boardId, request),
                 "댓글이 생성되었습니다.");
     }
 
     @GetMapping
     @Operation(summary = "댓글 목록 조회")
-    public ApiResponse<List<CommentResponse>> findAll(@PathVariable Long boardId) {
-        return ApiResponse.success(
+    public ApiResult<List<CommentResponse>> findAll(@PathVariable Long boardId) {
+        return ApiResult.success(
                 commentService.findAll(boardId),
                 "댓글 목록을 조회했습니다.");
     }
@@ -61,12 +61,12 @@ public class CommentController {
                     responseCode = "404",
                     description = "댓글 없음 또는 소속 불일치")
     })
-    public ApiResponse<CommentResponse> update(
+    public ApiResult<CommentResponse> update(
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable Long boardId,
             @PathVariable Long commentId,
             @Valid @RequestBody CommentUpdateRequest request) {
-        return ApiResponse.success(
+        return ApiResult.success(
                 commentService.update(
                         Long.valueOf(jwt.getSubject()),
                         boardId,
@@ -84,11 +84,11 @@ public class CommentController {
                     responseCode = "404",
                     description = "댓글 없음 또는 소속 불일치")
     })
-    public ApiResponse<Void> delete(
+    public ApiResult<Void> delete(
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable Long boardId,
             @PathVariable Long commentId) {
         commentService.delete(Long.valueOf(jwt.getSubject()), boardId, commentId);
-        return ApiResponse.success(null, "댓글이 삭제되었습니다.");
+        return ApiResult.success(null, "댓글이 삭제되었습니다.");
     }
 }

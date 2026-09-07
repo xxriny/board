@@ -2,7 +2,7 @@ package com.xxrin.board.controller;
 
 import com.xxrin.board.dto.request.BoardCreateRequest;
 import com.xxrin.board.dto.request.BoardUpdateRequest;
-import com.xxrin.board.dto.response.ApiResponse;
+import com.xxrin.board.dto.response.ApiResult;
 import com.xxrin.board.dto.response.BoardDetailResponse;
 import com.xxrin.board.dto.response.BoardResponse;
 import com.xxrin.board.dto.response.PageResponse;
@@ -48,17 +48,17 @@ public class BoardController {
                     responseCode = "400",
                     description = "검증 실패")
     })
-    public ApiResponse<BoardResponse> create(
+    public ApiResult<BoardResponse> create(
             @AuthenticationPrincipal Jwt jwt,
             @Valid @RequestBody BoardCreateRequest request) {
-        return ApiResponse.success(
+        return ApiResult.success(
                 boardService.create(Long.valueOf(jwt.getSubject()), request),
                 "게시글이 생성되었습니다.");
     }
 
     @GetMapping
     @Operation(summary = "게시글 목록 조회")
-    public ApiResponse<PageResponse<BoardResponse>> findAll(
+    public ApiResult<PageResponse<BoardResponse>> findAll(
             @RequestParam(defaultValue = "0")
             @Min(value = 0, message = "page는 0 이상이어야 합니다.")
             int page,
@@ -66,7 +66,7 @@ public class BoardController {
             @Min(value = 1, message = "size는 1 이상이어야 합니다.")
             @Max(value = 100, message = "size는 100 이하여야 합니다.")
             int size) {
-        return ApiResponse.success(
+        return ApiResult.success(
                 boardService.findAll(page, size),
                 "게시글 목록을 조회했습니다.");
     }
@@ -77,8 +77,8 @@ public class BoardController {
             responses = @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "404",
                     description = "게시글 없음"))
-    public ApiResponse<BoardDetailResponse> findDetail(@PathVariable Long id) {
-        return ApiResponse.success(
+    public ApiResult<BoardDetailResponse> findDetail(@PathVariable Long id) {
+        return ApiResult.success(
                 boardService.findDetail(id),
                 "게시글 상세를 조회했습니다.");
     }
@@ -92,11 +92,11 @@ public class BoardController {
                     responseCode = "404",
                     description = "게시글 없음")
     })
-    public ApiResponse<BoardResponse> update(
+    public ApiResult<BoardResponse> update(
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable Long id,
             @Valid @RequestBody BoardUpdateRequest request) {
-        return ApiResponse.success(
+        return ApiResult.success(
                 boardService.update(Long.valueOf(jwt.getSubject()), id, request),
                 "게시글이 수정되었습니다.");
     }
@@ -110,10 +110,10 @@ public class BoardController {
                     responseCode = "404",
                     description = "게시글 없음")
     })
-    public ApiResponse<Void> delete(
+    public ApiResult<Void> delete(
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable Long id) {
         boardService.delete(Long.valueOf(jwt.getSubject()), id);
-        return ApiResponse.success(null, "게시글이 삭제되었습니다.");
+        return ApiResult.success(null, "게시글이 삭제되었습니다.");
     }
 }

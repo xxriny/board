@@ -7,11 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xxrin.board.exception.ErrorCode;
 import org.junit.jupiter.api.Test;
 
-class ApiResponseTest {
+class ApiResultTest {
 
     @Test
     void successFactoryCreatesSuccessfulEnvelope() {
-        ApiResponse<String> response = ApiResponse.success("payload", "성공");
+        ApiResult<String> response = ApiResult.success("payload", "성공");
 
         assertThat(response.isSuccess()).isTrue();
         assertThat(response.getData()).isEqualTo("payload");
@@ -21,7 +21,7 @@ class ApiResponseTest {
 
     @Test
     void errorFactoryCreatesFailedEnvelope() {
-        ApiResponse<Void> response = ApiResponse.error(ErrorCode.BOARD_NOT_FOUND);
+        ApiResult<Void> response = ApiResult.error(ErrorCode.BOARD_NOT_FOUND);
 
         assertThat(response.isSuccess()).isFalse();
         assertThat(response.getData()).isNull();
@@ -31,7 +31,7 @@ class ApiResponseTest {
 
     @Test
     void successfulJsonOmitsErrorCode() throws Exception {
-        ApiResponse<String> response = ApiResponse.success("payload", "성공");
+        ApiResult<String> response = ApiResult.success("payload", "성공");
 
         JsonNode json = new ObjectMapper().readTree(new ObjectMapper().writeValueAsString(response));
 
