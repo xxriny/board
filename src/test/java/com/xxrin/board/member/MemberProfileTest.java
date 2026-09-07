@@ -10,7 +10,6 @@ import com.xxrin.board.repository.MemberRepository;
 import com.xxrin.board.service.MemberService;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 class MemberProfileTest {
 
@@ -22,7 +21,6 @@ class MemberProfileTest {
                 "password-hash",
                 "기존닉네임",
                 "01012345678");
-        ReflectionTestUtils.invokeMethod(member, "prePersist");
         when(members.findById(1L)).thenReturn(Optional.of(member));
 
         var response = new MemberService(members)
