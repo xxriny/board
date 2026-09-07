@@ -31,7 +31,7 @@ class CommentTest {
     }
 
     @Test
-    void updateChangesCommentContentAndUpdatedAt() {
+    void updateChangesCommentContent() {
         Board board = Board.builder()
                 .title("제목")
                 .content("내용")
@@ -46,7 +46,6 @@ class CommentTest {
         comment.update("수정 댓글");
 
         assertThat(comment.getContent()).isEqualTo("수정 댓글");
-        assertThat(comment.getUpdatedAt()).isNotNull();
     }
 
     private Member member(String nickname) {

@@ -3,6 +3,7 @@ package com.xxrin.board.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import java.time.LocalDateTime;
 import lombok.Getter;
 
@@ -23,8 +24,8 @@ public abstract class BaseTimeEntity {
         createdAt = now;
         updatedAt = now;
     }
-
-    protected void touch() {
+    @PreUpdate
+    private void preUpdate() {
         updatedAt = LocalDateTime.now();
     }
 }

@@ -37,25 +37,12 @@ public class Board extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    /*
-     * Legacy: 비회원 비밀번호 방식 비교용
-     *
-     * @Column(nullable = false, length = 100)
-     * private String writer;
-     *
-     * @Column(name = "password_hash", nullable = false, length = 60)
-     * private String passwordHash;
-     */
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "member_id", nullable = false)
     private Member author;
 
     @Column(name = "view_count", nullable = false)
     private int viewCount;
-
-//    @Formula("(select count(c.id) from comments c where c.board_id = id)")
-//    private long commentCount;
 
     @Column(name = "comment_count", nullable = false, columnDefinition = "int default 0")
     private int commentCount;
@@ -75,7 +62,6 @@ public class Board extends BaseTimeEntity {
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
-        touch();
     }
 
     /** 상세 조회 시 조회수를 한 건 증가시킨다. */
