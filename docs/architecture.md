@@ -49,7 +49,7 @@ board.jar
 
 ## 계층 책임
 
-- Controller: URI 매핑, 입력 검증, HTTP 상태와 `ApiResponse<T>` 생성
+- Controller: URI 매핑, 입력 검증, HTTP 상태와 `ApiResult<T>` 생성
 - Service: 유스케이스, 리소스 존재 확인, 트랜잭션 경계, DTO 변환 조정
 - Repository: Spring Data JPA 기본 CRUD, `Pageable` 페이징, 파생 쿼리
 - Domain: 엔티티 불변식과 명시적 상태 변경
@@ -78,7 +78,7 @@ v2에서는 springdoc Boot starter가 Controller의 OpenAPI 어노테이션을 �
 - Access Token은 15분 HS256 JWT이며 `Authorization: Bearer` 헤더로 전달한다.
 - Refresh Token은 14일 동안 유효하고 원문은 HttpOnly 쿠키로, SHA-256 해시는 DB에 기기별로 저장한다.
 - 게시글과 댓글 조회는 공개하며 생성은 로그인 회원, 수정·삭제는 작성자만 허용한다.
-- 인증은 stateless이며 Security 필터의 401/403도 `ApiResponse`와 `ErrorCode` 형식으로 반환한다.
+- 인증은 stateless이며 Security 필터의 401/403도 `ApiResult`와 `ErrorCode` 형식으로 반환한다.
 - 외부에 API를 제공할 때는 TLS 종료를 구성하고, 프록시·방화벽에서 애플리케이션과 MySQL의 접근 대상을 제한한다. Swagger UI와 OpenAPI 엔드포인트도 공개 범위에 맞춰 제한한다.
 - Spring Boot와 직접 지정한 라이브러리는 지원되는 보안 패치 버전으로 정기적으로 갱신한다.
 

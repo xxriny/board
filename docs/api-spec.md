@@ -2,7 +2,7 @@
 
 ## 공통 형식
 
-Content-Type은 `application/json`이며 외부 환경에서는 HTTPS를 사용한다. 성공과 오류는 모두 `ApiResponse<T>`로 감싼다.
+Content-Type은 `application/json`이며 외부 환경에서는 HTTPS를 사용한다. 성공과 오류는 모두 `ApiResult<T>`로 감싼다.
 
 성공 응답:
 

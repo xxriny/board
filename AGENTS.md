@@ -26,7 +26,7 @@
 - 단순 CRUD, 페이징, 단순 조건 조회는 Spring Data JPA 기본 메서드·파생 쿼리·`Pageable`을 우선 사용한다.
 - 복잡한 동적 쿼리나 통계성 쿼리가 필요할 때만 `@Query`, Custom Repository, `EntityManager` 직접 구현을 고려한다.
 - 트랜잭션 경계는 Service 계층에 둔다.
-- 외부 응답은 `ApiResponse<T>`로 감싼 DTO를 반환하며 JPA Entity를 직접 직렬화하지 않는다.
+- 외부 응답은 `ApiResult<T>`로 감싼 DTO를 반환하며 JPA Entity를 직접 직렬화하지 않는다.
 - Entity에는 public Setter를 두지 않고 도메인 메서드로 상태를 변경한다.
 - 댓글은 1-depth만 지원하며 부모 댓글 연관관계를 추가하지 않는다.
 - 게시글과 댓글 비밀번호 원문은 저장하지 않고 해시로 저장한다.

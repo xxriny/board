@@ -14,7 +14,7 @@ v1의 최초 세부 작업 계획, WAR 빌드 명령과 수동 Spring 설정 기
 - [x] Spring Security 회원가입·로그인과 JWT 인증
 - [x] BCrypt 회원 비밀번호 해시와 기기별 Refresh Token 회전
 - [x] 회원 소유권 기반 게시글·댓글 생성·수정·삭제
-- [x] `ApiResponse<T>`와 `ErrorCode` 기반 JSON 오류 처리
+- [x] `ApiResult<T>`와 `ErrorCode` 기반 JSON 오류 처리
 - [x] 게시글 상세 조회수 증가, 댓글 수 계산, 게시글 삭제 시 댓글 cascade 삭제
 - [x] springdoc 기반 OpenAPI와 Swagger UI
 - [x] MySQL Docker Compose, Testcontainers MySQL 통합 테스트
