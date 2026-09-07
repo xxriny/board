@@ -31,10 +31,15 @@
   },
   "doc": {
     "tableIds": [
+      "member",
       "board",
-      "comment"
+      "comment",
+      "refreshToken"
     ],
     "relationshipIds": [
+      "memberBoards",
+      "memberComments",
+      "memberRefreshTokens",
       "boardComments"
     ],
     "indexIds": [],
@@ -42,6 +47,43 @@
   },
   "collections": {
     "tableEntities": {
+      "member": {
+        "id": "member",
+        "name": "members",
+        "comment": "회원",
+        "columnIds": [
+          "memberId",
+          "memberEmail",
+          "memberPasswordHash",
+          "memberNickname",
+          "memberPhone",
+          "memberRole",
+          "memberCreatedAt",
+          "memberUpdatedAt"
+        ],
+        "seqColumnIds": [
+          "memberId",
+          "memberEmail",
+          "memberPasswordHash",
+          "memberNickname",
+          "memberPhone",
+          "memberRole",
+          "memberCreatedAt",
+          "memberUpdatedAt"
+        ],
+        "ui": {
+          "x": 58,
+          "y": 300,
+          "zIndex": 1,
+          "widthName": 65,
+          "widthComment": 60,
+          "color": "#FFD43B"
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
       "board": {
         "id": "board",
         "name": "boards",
@@ -50,8 +92,7 @@
           "boardId",
           "boardTitle",
           "boardContent",
-          "boardWriter",
-          "boardPasswordHash",
+          "boardMemberId",
           "boardViewCount",
           "boardCommentCount",
           "boardCreatedAt",
@@ -61,23 +102,22 @@
           "boardId",
           "boardTitle",
           "boardContent",
-          "boardWriter",
-          "boardPasswordHash",
+          "boardMemberId",
           "boardViewCount",
           "boardCommentCount",
           "boardCreatedAt",
           "boardUpdatedAt"
         ],
         "ui": {
-          "x": 58,
-          "y": 248,
-          "zIndex": 1,
+          "x": 700,
+          "y": 80,
+          "zIndex": 2,
           "widthName": 60,
           "widthComment": 60,
           "color": "#4DABF7"
         },
         "meta": {
-          "updateAt": 1788502177490,
+          "updateAt": 0,
           "createAt": 0
         }
       },
@@ -88,36 +128,227 @@
         "columnIds": [
           "commentId",
           "commentContent",
-          "commentWriter",
-          "commentPasswordHash",
+          "commentMemberId",
           "commentBoardId",
           "commentCreatedAt",
-          "0KTDN_ZKSgeyndZcmYIHF"
+          "commentUpdatedAt"
         ],
         "seqColumnIds": [
           "commentId",
           "commentContent",
-          "commentWriter",
-          "commentPasswordHash",
+          "commentMemberId",
           "commentBoardId",
           "commentCreatedAt",
-          "0KTDN_ZKSgeyndZcmYIHF"
+          "commentUpdatedAt"
         ],
         "ui": {
-          "x": 665,
-          "y": 269,
-          "zIndex": 2,
+          "x": 1300,
+          "y": 350,
+          "zIndex": 3,
           "widthName": 61,
           "widthComment": 60,
           "color": "#69DB7C"
         },
         "meta": {
-          "updateAt": 1788502178140,
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "refreshToken": {
+        "id": "refreshToken",
+        "name": "refresh_tokens",
+        "comment": "Refresh Token",
+        "columnIds": [
+          "refreshTokenId",
+          "refreshTokenMemberId",
+          "refreshTokenHash",
+          "refreshTokenExpiresAt",
+          "refreshTokenCreatedAt",
+          "refreshTokenUpdatedAt"
+        ],
+        "seqColumnIds": [
+          "refreshTokenId",
+          "refreshTokenMemberId",
+          "refreshTokenHash",
+          "refreshTokenExpiresAt",
+          "refreshTokenCreatedAt",
+          "refreshTokenUpdatedAt"
+        ],
+        "ui": {
+          "x": 700,
+          "y": 750,
+          "zIndex": 4,
+          "widthName": 98,
+          "widthComment": 92,
+          "color": "#B197FC"
+        },
+        "meta": {
+          "updateAt": 0,
           "createAt": 0
         }
       }
     },
     "tableColumnEntities": {
+      "memberId": {
+        "id": "memberId",
+        "tableId": "member",
+        "name": "id",
+        "comment": "회원 식별자",
+        "dataType": "Long",
+        "default": "",
+        "options": 11,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "memberEmail": {
+        "id": "memberEmail",
+        "tableId": "member",
+        "name": "email",
+        "comment": "로그인 이메일",
+        "dataType": "String",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 4,
+          "widthName": 60,
+          "widthComment": 75,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "memberPasswordHash": {
+        "id": "memberPasswordHash",
+        "tableId": "member",
+        "name": "password_hash",
+        "comment": "회원 비밀번호 해시",
+        "dataType": "String",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 90,
+          "widthComment": 92,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "memberNickname": {
+        "id": "memberNickname",
+        "tableId": "member",
+        "name": "nickname",
+        "comment": "회원 닉네임",
+        "dataType": "String",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 4,
+          "widthName": 60,
+          "widthComment": 68,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "memberPhone": {
+        "id": "memberPhone",
+        "tableId": "member",
+        "name": "phone",
+        "comment": "회원 전화번호",
+        "dataType": "String",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 4,
+          "widthName": 60,
+          "widthComment": 75,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "memberRole": {
+        "id": "memberRole",
+        "tableId": "member",
+        "name": "role",
+        "comment": "회원 권한",
+        "dataType": "Role",
+        "default": "USER",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "memberCreatedAt": {
+        "id": "memberCreatedAt",
+        "tableId": "member",
+        "name": "created_at",
+        "comment": "회원 생성 시각",
+        "dataType": "LocalDateTime",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 63,
+          "widthComment": 71,
+          "widthDataType": 85,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "memberUpdatedAt": {
+        "id": "memberUpdatedAt",
+        "tableId": "member",
+        "name": "updated_at",
+        "comment": "회원 수정 시각",
+        "dataType": "LocalDateTime",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 67,
+          "widthComment": 71,
+          "widthDataType": 85,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
       "boardId": {
         "id": "boardId",
         "tableId": "board",
@@ -178,38 +409,18 @@
           "createAt": 0
         }
       },
-      "boardWriter": {
-        "id": "boardWriter",
+      "boardMemberId": {
+        "id": "boardMemberId",
         "tableId": "board",
-        "name": "writer",
-        "comment": "게시글 작성자",
-        "dataType": "String",
+        "name": "member_id",
+        "comment": "작성 회원 식별자",
+        "dataType": "Long",
         "default": "",
         "options": 8,
         "ui": {
-          "keys": 0,
-          "widthName": 60,
-          "widthComment": 68,
-          "widthDataType": 60,
-          "widthDefault": 60
-        },
-        "meta": {
-          "updateAt": 0,
-          "createAt": 0
-        }
-      },
-      "boardPasswordHash": {
-        "id": "boardPasswordHash",
-        "tableId": "board",
-        "name": "password_hash",
-        "comment": "게시글 비밀번호 해시",
-        "dataType": "String",
-        "default": "",
-        "options": 8,
-        "ui": {
-          "keys": 0,
-          "widthName": 90,
-          "widthComment": 102,
+          "keys": 2,
+          "widthName": 68,
+          "widthComment": 81,
           "widthDataType": 60,
           "widthDefault": 60
         },
@@ -338,38 +549,18 @@
           "createAt": 0
         }
       },
-      "commentWriter": {
-        "id": "commentWriter",
+      "commentMemberId": {
+        "id": "commentMemberId",
         "tableId": "comment",
-        "name": "writer",
-        "comment": "댓글 작성자",
-        "dataType": "String",
+        "name": "member_id",
+        "comment": "작성 회원 식별자",
+        "dataType": "Long",
         "default": "",
         "options": 8,
         "ui": {
-          "keys": 0,
-          "widthName": 60,
-          "widthComment": 60,
-          "widthDataType": 60,
-          "widthDefault": 60
-        },
-        "meta": {
-          "updateAt": 0,
-          "createAt": 0
-        }
-      },
-      "commentPasswordHash": {
-        "id": "commentPasswordHash",
-        "tableId": "comment",
-        "name": "password_hash",
-        "comment": "댓글 비밀번호 해시",
-        "dataType": "String",
-        "default": "",
-        "options": 8,
-        "ui": {
-          "keys": 0,
-          "widthName": 90,
-          "widthComment": 92,
+          "keys": 2,
+          "widthName": 68,
+          "widthComment": 81,
           "widthDataType": 60,
           "widthDefault": 60
         },
@@ -418,8 +609,8 @@
           "createAt": 0
         }
       },
-      "0KTDN_ZKSgeyndZcmYIHF": {
-        "id": "0KTDN_ZKSgeyndZcmYIHF",
+      "commentUpdatedAt": {
+        "id": "commentUpdatedAt",
         "tableId": "comment",
         "name": "updated_at",
         "comment": "댓글 수정 시각",
@@ -434,12 +625,216 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1788243440166,
-          "createAt": 1788243393252
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "refreshTokenId": {
+        "id": "refreshTokenId",
+        "tableId": "refreshToken",
+        "name": "id",
+        "comment": "토큰 식별자",
+        "dataType": "Long",
+        "default": "",
+        "options": 11,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 68,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "refreshTokenMemberId": {
+        "id": "refreshTokenMemberId",
+        "tableId": "refreshToken",
+        "name": "member_id",
+        "comment": "회원 식별자",
+        "dataType": "Long",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 2,
+          "widthName": 68,
+          "widthComment": 68,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "refreshTokenHash": {
+        "id": "refreshTokenHash",
+        "tableId": "refreshToken",
+        "name": "token_hash",
+        "comment": "Refresh Token SHA-256 해시",
+        "dataType": "String",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 4,
+          "widthName": 70,
+          "widthComment": 130,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "refreshTokenExpiresAt": {
+        "id": "refreshTokenExpiresAt",
+        "tableId": "refreshToken",
+        "name": "expires_at",
+        "comment": "토큰 만료 시각",
+        "dataType": "Instant",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 65,
+          "widthComment": 71,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "refreshTokenCreatedAt": {
+        "id": "refreshTokenCreatedAt",
+        "tableId": "refreshToken",
+        "name": "created_at",
+        "comment": "토큰 생성 시각",
+        "dataType": "LocalDateTime",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 63,
+          "widthComment": 71,
+          "widthDataType": 85,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "refreshTokenUpdatedAt": {
+        "id": "refreshTokenUpdatedAt",
+        "tableId": "refreshToken",
+        "name": "updated_at",
+        "comment": "토큰 수정 시각",
+        "dataType": "LocalDateTime",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 67,
+          "widthComment": 71,
+          "widthDataType": 85,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
         }
       }
     },
     "relationshipEntities": {
+      "memberBoards": {
+        "id": "memberBoards",
+        "identification": false,
+        "relationshipType": 16,
+        "startRelationshipType": 2,
+        "start": {
+          "tableId": "member",
+          "columnIds": [
+            "memberId"
+          ],
+          "x": 524,
+          "y": 420,
+          "direction": 2
+        },
+        "end": {
+          "tableId": "board",
+          "columnIds": [
+            "boardMemberId"
+          ],
+          "x": 700,
+          "y": 190,
+          "direction": 1
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "memberComments": {
+        "id": "memberComments",
+        "identification": false,
+        "relationshipType": 16,
+        "startRelationshipType": 2,
+        "start": {
+          "tableId": "member",
+          "columnIds": [
+            "memberId"
+          ],
+          "x": 524,
+          "y": 450,
+          "direction": 2
+        },
+        "end": {
+          "tableId": "comment",
+          "columnIds": [
+            "commentMemberId"
+          ],
+          "x": 1300,
+          "y": 470,
+          "direction": 1
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
+      "memberRefreshTokens": {
+        "id": "memberRefreshTokens",
+        "identification": false,
+        "relationshipType": 16,
+        "startRelationshipType": 2,
+        "start": {
+          "tableId": "member",
+          "columnIds": [
+            "memberId"
+          ],
+          "x": 524,
+          "y": 480,
+          "direction": 2
+        },
+        "end": {
+          "tableId": "refreshToken",
+          "columnIds": [
+            "refreshTokenMemberId"
+          ],
+          "x": 700,
+          "y": 850,
+          "direction": 1
+        },
+        "meta": {
+          "updateAt": 0,
+          "createAt": 0
+        }
+      },
       "boardComments": {
         "id": "boardComments",
         "identification": false,
@@ -450,8 +845,8 @@
           "columnIds": [
             "boardId"
           ],
-          "x": 524,
-          "y": 384,
+          "x": 1166,
+          "y": 250,
           "direction": 2
         },
         "end": {
@@ -459,8 +854,8 @@
           "columnIds": [
             "commentBoardId"
           ],
-          "x": 665,
-          "y": 381,
+          "x": 1300,
+          "y": 500,
           "direction": 1
         },
         "meta": {
