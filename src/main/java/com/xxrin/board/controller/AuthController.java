@@ -7,13 +7,14 @@ import com.xxrin.board.dto.response.ApiResult;
 import com.xxrin.board.dto.response.MemberResponse;
 import com.xxrin.board.service.AuthService;
 import com.xxrin.board.service.AuthTokens;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,6 +38,9 @@ public class AuthController {
     @Value("${auth.cookie-secure:false}")
     private boolean cookieSecure;
 
+    @Operation(
+            summary = "회원가입",
+            description = "이메일, 비밀번호, 닉네임과 전화번호를 검증해 회원을 생성합니다.")
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResult<MemberResponse> signup(@Valid @RequestBody SignupRequest request) {
@@ -45,6 +49,10 @@ public class AuthController {
                 "회원가입되었습니다.");
     }
 
+    @Operation(
+            summary = "로그인",
+            description = "이메일과 비밀번호를 검증하고 Access Token은 응답 본문에, "
+                    + "Refresh Token은 HttpOnly 쿠키에 발급합니다.")
     @PostMapping("/login")
     public ResponseEntity<ApiResult<AccessTokenResponse>> login(
             @Valid @RequestBody LoginRequest request) {
@@ -52,6 +60,9 @@ public class AuthController {
         return withRefreshCookie(tokens, "로그인되었습니다.");
     }
 
+    @Operation(
+            summary = "토큰 재발급",
+            description = "Refresh Token을 검증하고 회전해 새 Access Token과 Refresh Token을 발급합니다.")
     @PostMapping("/refresh")
     public ResponseEntity<ApiResult<AccessTokenResponse>> refresh(
             @CookieValue(name = "refreshToken", required = false) String refreshToken) {
@@ -60,6 +71,9 @@ public class AuthController {
                 "Access Token이 재발급되었습니다.");
     }
 
+    @Operation(
+            summary = "현재 기기 로그아웃",
+            description = "현재 기기의 Refresh Token을 폐기하고 쿠키를 만료시킵니다.")
     @PostMapping("/logout")
     public ResponseEntity<ApiResult<Void>> logout(
             @CookieValue(name = "refreshToken", required = false) String refreshToken) {
@@ -67,6 +81,9 @@ public class AuthController {
         return clearedCookie("로그아웃되었습니다.");
     }
 
+    @Operation(
+            summary = "전체 기기 로그아웃",
+            description = "로그인 회원의 모든 Refresh Token을 폐기하고 현재 쿠키를 만료시킵니다.")
     @PostMapping("/logout-all")
     public ResponseEntity<ApiResult<Void>> logoutAll(@AuthenticationPrincipal Jwt jwt) {
         authService.logoutAll(Long.valueOf(jwt.getSubject()));
@@ -79,7 +96,9 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(
                         HttpHeaders.SET_COOKIE,
-                        refreshCookie(tokens.refreshToken()).build().toString())
+                        refreshCookie(tokens.refreshToken())
+                                .build()
+                                .toString())
                 .body(ApiResult.success(tokens.access(), message));
     }
 
@@ -87,7 +106,10 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(
                         HttpHeaders.SET_COOKIE,
-                        refreshCookie("").maxAge(Duration.ZERO).build().toString())
+                        refreshCookie("")
+                                .maxAge(Duration.ZERO)
+                                .build()
+                                .toString())
                 .body(ApiResult.success(null, message));
     }
 

@@ -4,6 +4,7 @@ import com.xxrin.board.dto.request.MemberUpdateRequest;
 import com.xxrin.board.dto.response.ApiResult;
 import com.xxrin.board.dto.response.MemberResponse;
 import com.xxrin.board.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,9 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @Operation(
+            summary = "내 정보 조회",
+            description = "Access Token의 회원 식별자로 로그인 회원의 정보를 조회합니다.")
     @GetMapping
     public ApiResult<MemberResponse> findMe(@AuthenticationPrincipal Jwt jwt) {
         return ApiResult.success(
@@ -31,6 +35,9 @@ public class MemberController {
                 "회원 정보를 조회했습니다.");
     }
 
+    @Operation(
+            summary = "내 정보 수정",
+            description = "로그인 회원의 닉네임과 전화번호를 중복 검증 후 수정합니다.")
     @PutMapping
     public ApiResult<MemberResponse> updateMe(
             @AuthenticationPrincipal Jwt jwt,
